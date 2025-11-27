@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog dortů - Cukrářství Blahutovi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #fdfbf7; font-family: 'Montserrat', sans-serif; color: #4a4a4a; }
+        h1, h2 { font-family: 'Dancing Script', cursive; }
+        
+        .btn-konfigurator {
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px -5px rgba(219, 39, 119, 0.4);
+        }
+        .btn-konfigurator:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px -5px rgba(219, 39, 119, 0.5);
+        }
+        .cake-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .cake-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-pink-100 shadow-sm">
+        <div class="container mx-auto px-4 py-4 md:py-6 text-center flex flex-col items-center">
+            <h1 class="text-3xl md:text-5xl text-pink-600 mb-2">Cukrářství Blahutovi</h1>
+            
+            <div class="mt-6 w-full max-w-2xl bg-pink-50 p-6 rounded-2xl border border-pink-100">
+                <p class="text-lg text-gray-700 mb-4 font-semibold">Chcete si dort sestavit přesně podle sebe?</p>
+                <a href="https://www.cukrarstviblahutovi.cz/konfigurator-dortu/" target="_blank" 
+                   class="btn-konfigurator w-full md:w-auto inline-flex justify-center items-center gap-3 px-8 py-4 rounded-full text-xl font-bold uppercase tracking-wide">
+                   <span>🍰</span>
+                   <span>Přejít do Konfigurátoru dortů</span>
+                   <span>➜</span>
+                </a>
+                <p class="text-xs text-gray-400 mt-3">Kliknutím budete přesměrováni na náš online nástroj</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-12">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl text-gray-800 mb-4">Inspirace z naší výroby</h2>
+            <p class="text-gray-500 max-w-2xl mx-auto">Níže naleznete ukázky dortů, které jsme již pekli. Pokud se vám některý líbí, můžete si ho rovnou objednat emailem.</p>
+        </div>
+
+        <div id="grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8 text-center mt-12">
+        <p>&copy; 2024 Cukrářství Blahutovi</p>
+    </footer>
+
+    <script>
+        // Kompletní seznam dortů (opravená data z Excelu)
+        const cakes = [
+            { id: 1, name: "V MARCIPÁNU, 2 FIGURKY", portions: "12", price: "1 800 Kč" },
+            { id: 2, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", portions: "12", price: "1 900 Kč" },
+            { id: 3, name: "2 PATRA, V MARCIPÁNU", portions: "20", price: "2 800 Kč" },
+            { id: 4, name: "OBMAZANÝ, SNĚHOVÉ OZDOBY, MAKRONKY", portions: "12", price: "1 600 Kč" },
+            { id: 5, name: "V MARCIPÁNU, 2 MARCIPÁNOVÉ FIGURKY", portions: "12", price: "1 600 Kč" },
+            { id: 6, name: "V MARCIPÁNU (3,5 Kg)", portions: "15-20", price: "2 100 Kč" },
+            { id: 7, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", portions: "12", price: "1 700 Kč" },
+            { id: 8, name: "V MARCIPÁNU, 1 MARCIPÁNOVÁ FIGURKA", portions: "12", price: "1 600 Kč" },
+            { id: 9, name: "MARCIPÁNOVÁ PLACKA, JEDLÝ PAPÍR", portions: "12", price: "1 400 Kč" },
+            { id: 10, name: "V MARCIPÁNU, OZDOBY, JEDLÝ PAPÍR", portions: "12", price: "2 000 Kč" },
+            { id: 11, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", portions: "12", price: "1 800 Kč" },
+            { id: 12, name: "MODELOVANÝ V MARCIPÁNU - Bezubka", portions: "25", price: "3 100 Kč" },
+            { id: 13, name: "V MARCIPÁNU, JEDLÝ PAPÍR", portions: "12", price: "1 400 Kč" },
+            { id: 14, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", portions: "15-20", price: "2 700 Kč" },
+            { id: 15, name: "V MARCIPÁNU", portions: "12", price: "1 500 Kč" },
+            { id: 16, name: "V MARCIPÁNU, 1 MARCIPÁNOVÁ FIGURKA", portions: "6-8", price: "800 Kč" }, // Opraveno datum
+            { id: 17, name: "V MARCIPÁNU", portions: "14", price: "2 300 Kč" },
+            { id: 18, name: "ČÍSLICE V MARCIPÁNU (4,5 Kg)", portions: "25-30", price: "2 900 Kč" },
+            { id: 19, name: "V MARCIPÁNU, JEDLÝ PAPÍR", portions: "12", price: "1 600 Kč" },
+            { id: 20, name: "V MARCIPÁNU, JEDLÝ PAPÍR", portions: "12", price: "1 500 Kč" },
+            { id: 21, name: "V MARCIPÁNU, JEDLÝ PAPÍR", portions: "12", price: "1 400 Kč" },
+            { id: 22, name: "V MARCIPÁNU, FIGURKY", portions: "12", price: "1 900 Kč" },
+            { id: 23, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", portions: "8-10", price: "1 100 Kč" }, // Opraveno datum
+            { id: 24, name: "V MARCIPÁNU, JEDLÝ PAPÍR", portions: "12", price: "1 400 Kč" },
+            { id: 25, name: "V MARCIPÁNU, Bagr", portions: "8-10", price: "1 700 Kč" }, // Opraveno datum
+            { id: 26, name: "V MARCIPÁNU, MARCIPÁNOVÉ FIGURKY", portions: "8-10", price: "1 700 Kč" }, // Opraveno datum
+            { id: 27, name: "V ČOKOLÁDĚ, OZDOBY, JEDLÝ PAPÍR", portions: "12", price: "1 750 Kč" },
+            { id: 28, name: "OBSYPANÝ PIŠKOTEM, MARCIP. FIGURKY", portions: "12", price: "1 650 Kč" },
+            { id: 29, name: "OBMAZANÝ, OZDOBY, JEDLÝ PAPÍR", portions: "12", price: "2 100 Kč" },
+            { id: 30, name: "2 PATRA S ČOKOLÁDOU, OZDOBY", portions: "18-20", price: "2 700 Kč" },
+            { id: 31, name: "2 PATRA V MARCIPÁNU, BING", portions: "18-20", price: "3 000 Kč" },
+            { id: 32, name: "V MARCIPÁNU, 6 FIGUREK PAW", portions: "12", price: "2 500 Kč" },
+            { id: 33, name: "V MARCIPÁNU, FIGURKY A OZDOBY", portions: "12", price: "2 100 Kč" },
+            { id: 34, name: "V MARCIPÁNU, 1 MARCIPÁNOVÁ FIGURKA", portions: "8-10", price: "1 350 Kč" }, // Opraveno datum
+            { id: 35, name: "V MARCIPÁNU, 1 MARCIPÁNOVÁ FIGURKA", portions: "8-10", price: "1 350 Kč" }, // Opraveno datum
+            { id: 36, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", portions: "12", price: "1 900 Kč" },
+            { id: 37, name: "V MARCIPÁNU, JEDLÝ PAPÍR, FIGURKA", portions: "12", price: "1 700 Kč" },
+            { id: 38, name: "MARCIPÁN, KRÉM, OVOCE", portions: "10-12", price: "1 500 Kč" }, // Opraveno datum
+            { id: 39, name: "OBMAZANÝ, OZDOBY, JEDLÝ PAPÍR", portions: "10", price: "1 250 Kč" },
+            { id: 40, name: "OBMAZANÝ, ČOKOLÁDA, OVOCE", portions: "12", price: "2 000 Kč" },
+            { id: 41, name: "OBMAZANÝ, ČOKOLÁDOVÝ OBSYP, OVOCE", portions: "25", price: "3 200 Kč" },
+            { id: 42, name: "NAHÝ DORT, OVOCE", portions: "8-10", price: "1 300 Kč" }, // Opraveno datum
+            { id: 43, name: "ČOKOLÁDOVÝ PAŘÍŽ, MALINY", portions: "10", price: "700 Kč" },
+            { id: 44, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", portions: "15-20", price: "2 200 Kč" },
+            { id: 45, name: "V ČOKOLÁDĚ, MARCIPÁNOVÉ OZDOBY", portions: "15-20", price: "2 100 Kč" },
+            { id: 46, name: "MALÉ SRDCE", portions: "6", price: "450 Kč" },
+            { id: 47, name: "V ČOKOLÁDĚ, MARCIPÁNOVÉ OZDOBY", portions: "20-25", price: "3 300 Kč" },
+            { id: 48, name: "V ČOKOLÁDĚ, MARCIPÁNOVÉ OZDOBY", portions: "6", price: "700 Kč" },
+            { id: 49, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", portions: "10", price: "1 100 Kč" },
+            { id: 50, name: "MINI ROLÁDY", portions: "10", price: "200 Kč" },
+            { id: 51, name: "OBMAZANÝ, OVOCE", portions: "40-50", price: "5 500 Kč" },
+            { id: 52, name: "BÍLÝ FONDÁN, OVOCE", portions: "15-20", price: "2 800 Kč" },
+            { id: 53, name: "NAHÝ DORT, OVOCE (5,5 Kg)", portions: "20-25", price: "3 500 Kč" },
+            { id: 54, name: "OBMAZANÝ, ŽIVÉ KVĚTY", portions: "20-25", price: "3 300 Kč" },
+            { id: 55, name: "SVATEBNÍ A DĚKOVACÍ DORTY", portions: "35-40", price: "5 000 Kč" },
+            { id: 56, name: "OBMAZANÝ, ČOKOLÁDOVÝ OBSYP", portions: "20-25", price: "3 300 Kč" },
+            { id: 57, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", portions: "20-25", price: "2 900 Kč" },
+            { id: 58, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", portions: "20-25", price: "3 000 Kč" },
+            { id: 59, name: "V MARCIPÁNU", portions: "12", price: "1 500 Kč" },
+            { id: 60, name: "V MARCIPÁNU, JEDLÝ PAPÍR", portions: "15-20", price: "2 500 Kč" },
+            { id: 61, name: "V MARCIPÁNU, JEDLÝ PAPÍR", portions: "15-20", price: "3 000 Kč" }
+        ];
+
+        // Vykreslení
+        const grid = document.getElementById('grid');
+        
+        grid.innerHTML = cakes.map(cake => {
+            return `
+            <div class="cake-card bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden flex flex-col h-full">
+                <div class="relative h-64 bg-gray-100 overflow-hidden group">
+                    <img src="images/${cake.id}.jpg" 
+                         alt="${cake.name}" 
+                         class="w-full h-full object-cover transition duration-500 group-hover:scale-110"
+                         onerror="this.onerror=null; this.src='https://placehold.co/600x400?text=Foto+chybí';">
+                    
+                    <div class="absolute top-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold shadow text-gray-600">
+                        Dort č. ${cake.id}
+                    </div>
+                </div>
+                
+                <div class="p-6 flex flex-col flex-grow">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2 leading-tight min-h-[3rem]">${cake.name}</h3>
+                    
+                    <div class="flex items-center gap-2 mb-4 text-sm text-gray-500 bg-gray-50 p-2 rounded-lg self-start">
+                        <span>🎂</span>
+                        <span>${cake.portions} porcí</span>
+                    </div>
+
+                    <div class="mt-auto pt-4 border-t border-gray-100 flex justify-between items-center">
+                        <span class="text-2xl font-bold text-pink-600">${cake.price}</span>
+                        
+                        <button onclick="objednat('${cake.id}', '${cake.name}')" 
+                                class="bg-gray-800 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-gray-700 transition shadow-lg text-sm">
+                            Mám zájem
+                        </button>
+                    </div>
+                </div>
+            </div>
+            `;
+        }).join('');
+
+        // Funkce pro objednání (Mailto)
+        function objednat(id, name) {
+            const subject = `Poptávka: Dort č. ${id} - ${name}`;
+            const body = `Dobrý den,\n\nmám zájem o dort z vašeho katalogu:\n\nČÍSLO DORTU: ${id}\nNÁZEV: ${name}\n\nProsím o informaci, zda je možné ho objednat na termín:\n(Doplňte datum)...\n\nMoje údaje:\nJméno:\nTelefon:`;
+            
+            // Otevření emailu
+            window.location.href = `mailto:objednavky@cukrarstviblahutovi.cz?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        }
+    </script>
+</body>
+</html>
