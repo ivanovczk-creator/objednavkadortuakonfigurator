@@ -4,8 +4,24 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Cukrářství Blahutovi</title>
-    <meta name="description" content="Tradiční cukrárna s láskou k řemeslu. Objednejte si ty nejlepší dorty." />
+    <meta name="description" content="Tradiční cukrárna s láskou k řemeslu. Objednejte si ty nejlepší dorty online." />
     
+    <!-- Social Media Tags (Open Graph) -->
+    <meta property="og:title" content="Cukrářství Blahutovi" />
+    <meta property="og:description" content="Tradiční cukrárna s láskou k řemeslu. Sestavte si vlastní dort nebo vyberte z naší nabídky." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://placehold.co/1200x630/fecdd3/881337?text=Cukrářství+Blahutovi" />
+    
+    <!-- Favicon (Cake Emoji) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍰</text></svg>">
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel Standalone -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -21,6 +37,15 @@
             fontFamily: {
               serif: ['"Playfair Display"', 'serif'],
               sans: ['"Lato"', 'sans-serif'],
+            },
+            animation: {
+              'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+            },
+            keyframes: {
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              }
             }
           }
         }
@@ -41,20 +66,543 @@
       h1, h2, h3, h4, h5, h6 {
         font-family: 'Playfair Display', serif;
       }
+      body.modal-open {
+        overflow: hidden;
+      }
+      /* Smooth scrolling */
+      html {
+        scroll-behavior: smooth;
+      }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/index.css">
 </head>
   <body>
     <div id="root"></div>
+
+    <!-- MAIN APPLICATION SCRIPT -->
+    <script type="text/babel" data-presets="typescript,react">
+      
+      // --- CONSTANTS & DATA ---
+      const EMAIL_TO = "objednavky@cukrarstviblahutovi.cz";
+      const CONFIGURATOR_URL = "https://www.cukrarstviblahutovi.cz/konfigurator-dortu/";
+      
+      const BRANCHES = [
+        "Hlavní prodejna (Centrum)",
+        "Pobočka Náměstí",
+        "Výdejna Sklad"
+      ];
+
+      // ZDE VLOŽTE VAŠE SKUTEČNÁ DATA
+      // Pokud máte fotky 45.jpg a 46.jpg ve složce images,
+      // zde jsem přidal položky s ID 45 a 46, aby se zobrazily.
+      const PRODUCTS = [
+        {
+          id: 45,
+          name: "Dort Speciál (45)",
+          price: 990,
+          description: "Popis tohoto dortu prosím upravte v souboru index.html.",
+          imageAlt: "Foto dortu 45"
+        },
+        {
+          id: 46,
+          name: "Dort Exkluziv (46)",
+          price: 1050,
+          description: "Popis tohoto dortu prosím upravte v souboru index.html.",
+          imageAlt: "Foto dortu 46"
+        },
+        {
+          id: 1,
+          name: "Královský Harlekýn",
+          price: 890,
+          description: "Lehká pařížská šlehačka v kombinaci s bílou šlehačkou na kakaovém korpusu.",
+          imageAlt: "Dort Harlekýn"
+        },
+        {
+          id: 2,
+          name: "Jahodový Sen",
+          price: 950,
+          description: "Nadýchaný piškot, vanilkový krém a čerstvé české jahody zalité želatinou.",
+          imageAlt: "Jahodový dort"
+        },
+        {
+          id: 3,
+          name: "Sacher Originál",
+          price: 820,
+          description: "Hutný čokoládový korpus promazaný meruňkovou marmeládou, potažený ganache.",
+          imageAlt: "Sacher dort"
+        },
+        {
+          id: 4,
+          name: "Kubánský dort",
+          price: 920,
+          description: "Čokoládový korpus, banány a pařížská šlehačka s kousky čokolády.",
+          imageAlt: "Kubánský dort s banány"
+        },
+        {
+          id: 5,
+          name: "Red Velvet",
+          price: 1100,
+          description: "Sametově červený korpus prokládaný krémem z mascarpone a smetany.",
+          imageAlt: "Red Velvet dort"
+        },
+        {
+          id: 6,
+          name: "Ovocný Košík",
+          price: 750,
+          description: "Variace sezónního ovoce na lehkém tvarohovém krému.",
+          imageAlt: "Ovocný dort"
+        },
+        {
+          id: 7,
+          name: "Pistáciový Deluxe",
+          price: 1250,
+          description: "Prémiový dort z pravých pistácií, malinový vklad a pistáciový krém.",
+          imageAlt: "Pistáciový dort"
+        },
+        {
+          id: 8,
+          name: "Medovník",
+          price: 690,
+          description: "Tradiční receptura, medové pláty spojené karamelovým krémem s ořechy.",
+          imageAlt: "Medovník"
+        }
+      ];
+
+      // --- COMPONENTS ---
+
+      // Button Component
+      const Button = ({ 
+        children, 
+        variant = 'primary', 
+        size = 'md', 
+        fullWidth = false,
+        className = '',
+        ...props 
+      }) => {
+        const baseStyles = "inline-flex items-center justify-center rounded-full font-bold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
+        
+        const variants = {
+          primary: "bg-rose-600 hover:bg-rose-700 text-white shadow-lg hover:shadow-xl focus:ring-rose-500",
+          secondary: "bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 shadow-sm hover:shadow-md focus:ring-rose-200",
+          outline: "bg-transparent border-2 border-white text-white hover:bg-white/10 focus:ring-white",
+        };
+
+        const sizes = {
+          sm: "px-3 py-1.5 text-sm",
+          md: "px-6 py-3 text-base",
+          lg: "px-8 py-4 text-lg",
+          xl: "px-10 py-5 text-xl uppercase tracking-wide",
+        };
+
+        const widthClass = fullWidth ? "w-full" : "";
+
+        return (
+          <button 
+            className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${widthClass} ${className}`}
+            {...props}
+          >
+            {children}
+          </button>
+        );
+      };
+
+      // Modal Component
+      const Modal = ({ isOpen, onClose, title, children }) => {
+        React.useEffect(() => {
+          if (isOpen) {
+            document.body.classList.add('modal-open');
+          } else {
+            document.body.classList.remove('modal-open');
+          }
+          return () => {
+            document.body.classList.remove('modal-open');
+          };
+        }, [isOpen]);
+
+        if (!isOpen) return null;
+
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/50 p-4 backdrop-blur-sm transition-opacity">
+            <div className="relative w-full max-w-lg rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200 my-8">
+              
+              {/* Header */}
+              <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+                <h3 className="text-xl font-serif font-bold text-gray-900">
+                  {title}
+                </h3>
+                <button
+                  onClick={onClose}
+                  className="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:outline-none"
+                  aria-label="Zavřít"
+                >
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="p-6">
+                {children}
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // Order Form Component
+      const OrderForm = ({ product, onCancel }) => {
+        const getMinDate = () => {
+          const date = new Date();
+          date.setDate(date.getDate() + 7);
+          return date.toISOString().split('T')[0];
+        };
+
+        const [formData, setFormData] = React.useState({
+          name: '',
+          phone: '',
+          date: getMinDate(),
+          branch: BRANCHES[0],
+          notes: ''
+        });
+
+        const handleChange = (e) => {
+          const { name, value } = e.target;
+          setFormData(prev => ({ ...prev, [name]: value }));
+        };
+
+        const handleSubmit = (e) => {
+          e.preventDefault();
+
+          const subject = encodeURIComponent(`Objednávka dortu: ${product.name}`);
+          const body = encodeURIComponent(`
+Dobrý den,
+
+Mám zájem o závaznou objednávku dortu.
+
+DETAILY PRODUKTU:
+-----------------
+Dort: ${product.name}
+Cena: ${product.price} Kč
+ID Produktu: ${product.id}
+
+ÚDAJE ZÁKAZNÍKA:
+----------------
+Jméno: ${formData.name}
+Telefon: ${formData.phone}
+Datum vyzvednutí: ${formData.date}
+Pobočka: ${formData.branch}
+
+Poznámka:
+${formData.notes || '-'}
+
+Děkuji.
+          `);
+
+          window.location.href = `mailto:${EMAIL_TO}?subject=${subject}&body=${body}`;
+          // Po odeslání počkáme chvíli a zavřeme modal
+          setTimeout(onCancel, 1000);
+        };
+
+        return (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="rounded-lg bg-rose-50 p-4 mb-4 border border-rose-100">
+              <p className="text-xs font-semibold text-rose-800 uppercase tracking-wide mb-1">Vybraný produkt</p>
+              <div className="flex justify-between items-center">
+                <p className="text-lg font-bold text-gray-900">{product.name}</p>
+                <p className="text-lg font-semibold text-rose-600">{product.price} Kč</p>
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Jméno a Příjmení</label>
+              <input
+                required
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full rounded-md border-gray-300 bg-white px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-rose-500 sm:text-sm sm:leading-6"
+                placeholder="Jan Novák"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Telefon</label>
+              <input
+                required
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                className="w-full rounded-md border-gray-300 bg-white px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-rose-500 sm:text-sm sm:leading-6"
+                placeholder="+420 777 888 999"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">Datum vyzvednutí</label>
+                <input
+                  required
+                  type="date"
+                  id="date"
+                  name="date"
+                  min={getMinDate()}
+                  value={formData.date}
+                  onChange={handleChange}
+                  className="w-full rounded-md border-gray-300 bg-white px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-rose-500 sm:text-sm sm:leading-6"
+                />
+                <p className="mt-1 text-xs text-gray-500">Min. 7 dní na přípravu</p>
+              </div>
+
+              <div>
+                <label htmlFor="branch" className="block text-sm font-medium text-gray-700 mb-1">Pobočka</label>
+                <select
+                  id="branch"
+                  name="branch"
+                  value={formData.branch}
+                  onChange={handleChange}
+                  className="w-full rounded-md border-gray-300 bg-white px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-rose-500 sm:text-sm sm:leading-6"
+                >
+                  {BRANCHES.map(branch => (
+                    <option key={branch} value={branch}>{branch}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">Poznámka (nepovinné)</label>
+              <textarea
+                id="notes"
+                name="notes"
+                rows={2}
+                value={formData.notes}
+                onChange={handleChange}
+                className="w-full rounded-md border-gray-300 bg-white px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-rose-500 sm:text-sm sm:leading-6"
+                placeholder="Speciální přání, nápis na dort..."
+              />
+            </div>
+
+            <div className="pt-4 flex gap-3">
+              <Button type="button" variant="secondary" fullWidth onClick={onCancel}>
+                Zrušit
+              </Button>
+              <Button type="submit" variant="primary" fullWidth>
+                Odeslat objednávku
+              </Button>
+            </div>
+            <p className="text-center text-xs text-gray-400 mt-2">Otevře se váš emailový klient s předvyplněnou zprávou.</p>
+          </form>
+        );
+      };
+
+      // Product Card Component
+      const ProductCard = ({ product, onOrder }) => {
+        // Seznam koncovek, které se zkouší. 
+        // Přidáno 'jfif', protože to je častý formát stažený z netu, který se tváří jako jpg.
+        const EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'jfif', 'JPG', 'JPEG', 'PNG', 'JFIF'];
+        const [extIndex, setExtIndex] = React.useState(0);
+        const [usePlaceholder, setUsePlaceholder] = React.useState(false);
+
+        React.useEffect(() => {
+          setExtIndex(0);
+          setUsePlaceholder(false);
+        }, [product.id]);
+
+        const getImageUrl = () => {
+          if (usePlaceholder) {
+            // Fallback - generátor obrázků, pokud se fotka nenajde
+            return `https://placehold.co/600x600/fff1f2/e11d48?text=${encodeURIComponent(product.name)}`;
+          }
+          const extension = EXTENSIONS[extIndex];
+          // Předpokládáme složku "images" ve stejném adresáři jako index.html
+          return `images/${product.id}.${extension}`;
+        };
+
+        const handleImageError = () => {
+          // Pokud se obrázek s aktuální koncovkou nenačte, zkusíme další
+          if (extIndex < EXTENSIONS.length - 1) {
+            setExtIndex(prev => prev + 1);
+          } else {
+            // Pokud dojdou všechny koncovky, zobrazíme placeholder
+            setUsePlaceholder(true);
+          }
+        };
+
+        return (
+          <div className="group flex flex-col h-full overflow-hidden rounded-2xl bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl border border-stone-100">
+            <div className="relative aspect-square overflow-hidden bg-stone-100">
+              <img
+                src={getImageUrl()}
+                alt={product.imageAlt}
+                onError={handleImageError}
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                loading="lazy"
+              />
+              <div className="absolute top-4 right-4 rounded-full bg-white/95 px-3 py-1 text-sm font-bold text-gray-900 shadow-sm backdrop-blur-sm">
+                {product.price} Kč
+              </div>
+            </div>
+            
+            <div className="flex flex-1 flex-col p-6">
+              <h3 className="mb-2 text-xl font-serif font-bold text-gray-900 leading-tight">{product.name}</h3>
+              <p className="mb-6 flex-1 text-sm leading-relaxed text-gray-600">
+                {product.description}
+              </p>
+              
+              <Button 
+                onClick={() => onOrder(product)} 
+                variant="secondary" 
+                fullWidth
+                className="mt-auto group-hover:bg-rose-50 group-hover:border-rose-300"
+              >
+                Objednat dort
+              </Button>
+            </div>
+          </div>
+        );
+      };
+
+      // Hero Component
+      const Hero = () => {
+        return (
+          <section className="relative flex min-h-[75vh] items-center justify-center overflow-hidden bg-rose-50 px-4 text-center">
+            {/* Decorative background circles */}
+            <div className="absolute top-0 left-0 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-rose-100/60 blur-3xl mix-blend-multiply"></div>
+            <div className="absolute bottom-0 right-0 h-96 w-96 translate-x-1/2 translate-y-1/2 rounded-full bg-orange-100/60 blur-3xl mix-blend-multiply"></div>
+            <div className="absolute top-1/2 left-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/40 blur-3xl"></div>
+
+            <div className="relative z-10 mx-auto max-w-4xl space-y-8 animate-fade-in-up">
+              <div className="space-y-6">
+                <span className="inline-block rounded-full bg-white/80 px-4 py-1.5 text-xs font-bold tracking-widest text-rose-600 uppercase shadow-sm backdrop-blur-sm ring-1 ring-rose-100">
+                  Rodinná tradice od roku 1995
+                </span>
+                <h1 className="text-5xl font-bold leading-tight text-gray-900 sm:text-6xl md:text-7xl font-serif">
+                  Cukrářství <span className="text-rose-600">Blahutovi</span>
+                </h1>
+                <p className="mx-auto max-w-2xl text-lg text-gray-600 md:text-xl font-light leading-relaxed">
+                  Tradiční cukrárna s láskou k řemeslu. Pečeme z poctivých surovin, 
+                  čerstvého másla a pravé smetany.
+                </p>
+              </div>
+
+              <div className="flex flex-col items-center justify-center gap-4 pt-4 sm:flex-row">
+                <a href={CONFIGURATOR_URL} className="w-full sm:w-auto">
+                  <Button size="xl" className="w-full shadow-rose-300/50 shadow-2xl hover:scale-105 transition-transform">
+                    <span className="mr-2">🍰</span> Sestavit vlastní dort
+                  </Button>
+                </a>
+              </div>
+              
+              <p className="text-sm text-gray-400">
+                Přejdete do našeho online konfigurátoru
+              </p>
+            </div>
+          </section>
+        );
+      };
+
+      // App Component
+      const App = () => {
+        const [selectedProduct, setSelectedProduct] = React.useState(null);
+        const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+        const handleOrderClick = (product) => {
+          setSelectedProduct(product);
+          setIsModalOpen(true);
+        };
+
+        const handleCloseModal = () => {
+          setIsModalOpen(false);
+          setTimeout(() => setSelectedProduct(null), 300);
+        };
+
+        return (
+          <div className="min-h-screen bg-stone-50 text-stone-800 font-sans selection:bg-rose-200 selection:text-rose-900">
+            {/* Navigation - Simple Logo */}
+            <nav className="absolute top-0 left-0 w-full p-6 z-20">
+              <div className="container mx-auto flex justify-between items-center">
+                <div className="text-2xl font-serif font-bold tracking-tighter text-gray-900">
+                  CB.
+                </div>
+                <div className="hidden sm:block text-sm font-semibold text-gray-500 bg-white/80 px-4 py-2 rounded-full backdrop-blur-sm shadow-sm">
+                  📞 Objednávky: +420 123 456 789
+                </div>
+              </div>
+            </nav>
+
+            <Hero />
+
+            <section className="py-20 px-4 md:px-8 bg-white" id="nabidka">
+              <div className="container mx-auto max-w-7xl">
+                <div className="mb-16 text-center space-y-4">
+                  <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900">
+                    Nebo si vyberte z naší nabídky
+                  </h2>
+                  <div className="h-1 w-20 bg-rose-400 mx-auto rounded-full"></div>
+                  <p className="text-gray-600 max-w-2xl mx-auto">
+                    Naše nejoblíbenější klasiky, které pro vás pečeme každý den čerstvé. 
+                    Objednejte si je snadno online a vyzvedněte na pobočce.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {PRODUCTS.map((product) => (
+                    <ProductCard 
+                      key={product.id} 
+                      product={product} 
+                      onOrder={handleOrderClick} 
+                    />
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <footer className="bg-stone-900 text-stone-400 py-16 px-4">
+              <div className="container mx-auto text-center space-y-8">
+                <div className="space-y-2">
+                   <h3 className="text-3xl font-serif text-white">Cukrářství Blahutovi</h3>
+                   <p className="text-stone-500">Sladký život od roku 1995</p>
+                </div>
+                
+                <div className="flex flex-wrap justify-center gap-8 text-sm font-medium">
+                  <a href="#" className="hover:text-white transition-colors">O nás</a>
+                  <a href="#" className="hover:text-white transition-colors">Pobočky</a>
+                  <a href="#" className="hover:text-white transition-colors">Alergeny</a>
+                  <a href="#" className="hover:text-white transition-colors">Kontakt</a>
+                </div>
+
+                <div className="pt-8 border-t border-stone-800">
+                  <p>© {new Date().getFullYear()} Cukrářství Blahutovi. Všechna práva vyhrazena.</p>
+                </div>
+              </div>
+            </footer>
+
+            <Modal 
+              isOpen={isModalOpen} 
+              onClose={handleCloseModal}
+              title="Nová objednávka"
+            >
+              {selectedProduct && (
+                <OrderForm 
+                  product={selectedProduct} 
+                  onCancel={handleCloseModal} 
+                />
+              )}
+            </Modal>
+          </div>
+        );
+      };
+
+      // Render
+      // Používáme createRoot pro React 18
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    </script>
   <script type="module" src="/index.tsx"></script>
 </body>
 </html>
