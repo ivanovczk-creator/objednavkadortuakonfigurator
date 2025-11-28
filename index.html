@@ -92,80 +92,69 @@
         "Výdejna Sklad"
       ];
 
-      // ZDE VLOŽTE VAŠE SKUTEČNÁ DATA
-      // Pokud máte fotky 45.jpg a 46.jpg ve složce images,
-      // zde jsem přidal položky s ID 45 a 46, aby se zobrazily.
+      // KOMPLETNÍ SEZNAM DORTŮ (1-61)
       const PRODUCTS = [
-        {
-          id: 45,
-          name: "Dort Speciál (45)",
-          price: 990,
-          description: "Popis tohoto dortu prosím upravte v souboru index.html.",
-          imageAlt: "Foto dortu 45"
-        },
-        {
-          id: 46,
-          name: "Dort Exkluziv (46)",
-          price: 1050,
-          description: "Popis tohoto dortu prosím upravte v souboru index.html.",
-          imageAlt: "Foto dortu 46"
-        },
-        {
-          id: 1,
-          name: "Královský Harlekýn",
-          price: 890,
-          description: "Lehká pařížská šlehačka v kombinaci s bílou šlehačkou na kakaovém korpusu.",
-          imageAlt: "Dort Harlekýn"
-        },
-        {
-          id: 2,
-          name: "Jahodový Sen",
-          price: 950,
-          description: "Nadýchaný piškot, vanilkový krém a čerstvé české jahody zalité želatinou.",
-          imageAlt: "Jahodový dort"
-        },
-        {
-          id: 3,
-          name: "Sacher Originál",
-          price: 820,
-          description: "Hutný čokoládový korpus promazaný meruňkovou marmeládou, potažený ganache.",
-          imageAlt: "Sacher dort"
-        },
-        {
-          id: 4,
-          name: "Kubánský dort",
-          price: 920,
-          description: "Čokoládový korpus, banány a pařížská šlehačka s kousky čokolády.",
-          imageAlt: "Kubánský dort s banány"
-        },
-        {
-          id: 5,
-          name: "Red Velvet",
-          price: 1100,
-          description: "Sametově červený korpus prokládaný krémem z mascarpone a smetany.",
-          imageAlt: "Red Velvet dort"
-        },
-        {
-          id: 6,
-          name: "Ovocný Košík",
-          price: 750,
-          description: "Variace sezónního ovoce na lehkém tvarohovém krému.",
-          imageAlt: "Ovocný dort"
-        },
-        {
-          id: 7,
-          name: "Pistáciový Deluxe",
-          price: 1250,
-          description: "Prémiový dort z pravých pistácií, malinový vklad a pistáciový krém.",
-          imageAlt: "Pistáciový dort"
-        },
-        {
-          id: 8,
-          name: "Medovník",
-          price: 690,
-          description: "Tradiční receptura, medové pláty spojené karamelovým krémem s ořechy.",
-          imageAlt: "Medovník"
-        }
+        { id: 1, name: "V MARCIPÁNU, 2 FIGURKY", price: 1800, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 1" },
+        { id: 2, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", price: 1900, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 2" },
+        { id: 3, name: "2 PATRA, V MARCIPÁNU", price: 2800, description: "Orientační počet porcí: 20", imageAlt: "Dort č. 3" },
+        { id: 4, name: "OBMAZANÝ, SNĚHOVÉ OZDOBY, MAKRONKY", price: 1600, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 4" },
+        { id: 5, name: "V MARCIPÁNU, 2 MARCIPÁNOVÉ FIGURKY", price: 1600, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 5" },
+        { id: 6, name: "V MARCIPÁNU (3,5 Kg)", price: 2100, description: "Orientační počet porcí: 15-20", imageAlt: "Dort č. 6" },
+        { id: 7, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", price: 1700, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 7" },
+        { id: 8, name: "V MARCIPÁNU, 1 MARCIPÁNOVÁ FIGURKA", price: 1600, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 8" },
+        { id: 9, name: "MARCIPÁNOVÁ PLACKA, JEDLÝ PAPÍR", price: 1400, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 9" },
+        { id: 10, name: "V MARCIPÁNU, OZDOBY, JEDLÝ PAPÍR", price: 2000, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 10" },
+        { id: 11, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", price: 1800, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 11" },
+        { id: 12, name: "MODELOVANÝ V MARCIPÁNU - BEZUBKA", price: 3100, description: "Orientační počet porcí: 25", imageAlt: "Dort č. 12" },
+        { id: 13, name: "V MARCIPÁNU, JEDLÝ PAPÍR", price: 1400, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 13" },
+        { id: 14, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", price: 2700, description: "Orientační počet porcí: 15-20", imageAlt: "Dort č. 14" },
+        { id: 15, name: "V MARCIPÁNU", price: 1500, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 15" },
+        { id: 16, name: "V MARCIPÁNU, 1 MARCIPÁNOVÁ FIGURKA", price: 800, description: "Velikost: 6-8 porcí", imageAlt: "Dort č. 16" },
+        { id: 17, name: "V MARCIPÁNU", price: 2300, description: "Orientační počet porcí: 14", imageAlt: "Dort č. 17" },
+        { id: 18, name: "ČÍSLICE V MARCIPÁNU (4,5 Kg)", price: 2900, description: "Orientační počet porcí: 25-30", imageAlt: "Dort č. 18" },
+        { id: 19, name: "V MARCIPÁNU, JEDLÝ PAPÍR", price: 1600, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 19" },
+        { id: 20, name: "V MARCIPÁNU, JEDLÝ PAPÍR", price: 1500, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 20" },
+        { id: 21, name: "V MARCIPÁNU, JEDLÝ PAPÍR", price: 1400, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 21" },
+        { id: 22, name: "V MARCIPÁNU, FIGURKY", price: 1900, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 22" },
+        { id: 23, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", price: 1100, description: "Velikost: 8-10 porcí", imageAlt: "Dort č. 23" },
+        { id: 24, name: "V MARCIPÁNU, JEDLÝ PAPÍR", price: 1400, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 24" },
+        { id: 25, name: "V MARCIPÁNU, BAGR", price: 1700, description: "Velikost: 8-10 porcí", imageAlt: "Dort č. 25" },
+        { id: 26, name: "V MARCIPÁNU, MARCIPÁNOVÉ FIGURKY", price: 1700, description: "Velikost: 8-10 porcí", imageAlt: "Dort č. 26" },
+        { id: 27, name: "V ČOKOLÁDĚ, OZDOBY, JEDLÝ PAPÍR (2,5 Kg)", price: 1750, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 27" },
+        { id: 28, name: "OBSYPANÝ PIŠKOTEM, MARCIPÁNOVÉ FIGURKY", price: 1650, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 28" },
+        { id: 29, name: "OBMAZANÝ, OZDOBY, JEDLÝ PAPÍR", price: 2100, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 29" },
+        { id: 30, name: "2 PATRA S ČOKOLÁDOU, OZDOBY, JEDLÝ P.", price: 2700, description: "Orientační počet porcí: 18-20", imageAlt: "Dort č. 30" },
+        { id: 31, name: "2 PATRA V MARCIPÁNU, BING", price: 3000, description: "Orientační počet porcí: 18-20", imageAlt: "Dort č. 31" },
+        { id: 32, name: "V MARCIPÁNU, 6 MARCIPÁNOVÝCH FIGUREK PAW", price: 2500, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 32" },
+        { id: 33, name: "V MARCIPÁNU, MARCIPÁNOVÉ FIGURKY A OZDOBY", price: 2100, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 33" },
+        { id: 34, name: "V MARCIPÁNU, 1 MARCIPÁNOVÁ FIGURKA", price: 1350, description: "Velikost: 8-10 porcí", imageAlt: "Dort č. 34" },
+        { id: 35, name: "V MARCIPÁNU, 1 MARCIPÁNOVÁ FIGURKA", price: 1350, description: "Velikost: 8-10 porcí", imageAlt: "Dort č. 35" },
+        { id: 36, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", price: 1900, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 36" },
+        { id: 37, name: "V MARCIPÁNU, JEDLÝ PAPÍR, FIGURKA", price: 1700, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 37" },
+        { id: 38, name: "MARCIPÁN, KRÉM, OVOCE", price: 1500, description: "Velikost: 10-12 porcí", imageAlt: "Dort č. 38" },
+        { id: 39, name: "OBMAZANÝ, OZDOBY, JEDLÝ PAPÍR, OVOCE", price: 1250, description: "Orientační počet porcí: 10", imageAlt: "Dort č. 39" },
+        { id: 40, name: "OBMAZANÝ, ČOKOLÁDA, OVOCE", price: 2000, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 40" },
+        { id: 41, name: "OBMAZANÝ, ČOKOLÁDOVÝ OBSYP, OVOCE", price: 3200, description: "Orientační počet porcí: 25", imageAlt: "Dort č. 41" },
+        { id: 42, name: "NAHÝ DORT, OVOCE", price: 1300, description: "Velikost: 8-10 porcí", imageAlt: "Dort č. 42" },
+        { id: 43, name: "ČOKOLÁDOVÝ PAŘÍŽ, MALINY", price: 700, description: "Orientační počet porcí: 10", imageAlt: "Dort č. 43" },
+        { id: 44, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", price: 2200, description: "Orientační počet porcí: 15-20", imageAlt: "Dort č. 44" },
+        { id: 45, name: "V ČOKOLÁDĚ, MARCIPÁNOVÉ OZDOBY", price: 2100, description: "Orientační počet porcí: 15-20", imageAlt: "Dort č. 45" },
+        { id: 46, name: "MALÉ SRDCE", price: 450, description: "Orientační počet porcí: 6", imageAlt: "Dort č. 46" },
+        { id: 47, name: "V ČOKOLÁDĚ, MARCIPÁNOVÉ OZDOBY", price: 3300, description: "Orientační počet porcí: 20-25", imageAlt: "Dort č. 47" },
+        { id: 48, name: "V ČOKOLÁDĚ, MARCIPÁNOVÉ OZDOBY", price: 700, description: "Orientační počet porcí: 6", imageAlt: "Dort č. 48" },
+        { id: 49, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", price: 1100, description: "Orientační počet porcí: 10", imageAlt: "Dort č. 49" },
+        { id: 50, name: "MINI ROLÁDY", price: 200, description: "Orientační počet porcí: 10", imageAlt: "Dort č. 50" },
+        { id: 51, name: "OBMAZANÝ, OVOCE", price: 5500, description: "Orientační počet porcí: 40-50", imageAlt: "Dort č. 51" },
+        { id: 52, name: "BÍLÝ FONDÁN, OVOCE", price: 2800, description: "Orientační počet porcí: 15-20", imageAlt: "Dort č. 52" },
+        { id: 53, name: "NAHÝ DORT, OVOCE (5,5 Kg)", price: 3500, description: "Orientační počet porcí: 20-25", imageAlt: "Dort č. 53" },
+        { id: 54, name: "OBMAZANÝ, ŽIVÉ KVĚTY", price: 3300, description: "Orientační počet porcí: 20-25", imageAlt: "Dort č. 54" },
+        { id: 55, name: "SVATEBNÍ A DĚKOVACÍ DORTY V MARCIPÁNU", price: 5000, description: "Orientační počet porcí: 35-40", imageAlt: "Dort č. 55" },
+        { id: 56, name: "OBMAZANÝ, ČOKOLÁDOVÝ OBSYP, OZDOBY", price: 3300, description: "Orientační počet porcí: 20-25", imageAlt: "Dort č. 56" },
+        { id: 57, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", price: 2900, description: "Orientační počet porcí: 20-25", imageAlt: "Dort č. 57" },
+        { id: 58, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", price: 3000, description: "Orientační počet porcí: 20-25", imageAlt: "Dort č. 58" },
+        { id: 59, name: "V MARCIPÁNU", price: 1500, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 59" },
+        { id: 60, name: "V MARCIPÁNU, JEDLÝ PAPÍR", price: 2500, description: "Orientační počet porcí: 15-20", imageAlt: "Dort č. 60" },
+        { id: 61, name: "V MARCIPÁNU, JEDLÝ PAPÍR, ČOKO HOBLINKY", price: 3000, description: "Orientační počet porcí: 15-20", imageAlt: "Dort č. 61" }
       ];
 
       // --- COMPONENTS ---
@@ -223,7 +212,7 @@
 
         return (
           <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/50 p-4 backdrop-blur-sm transition-opacity">
-            <div className="relative w-full max-w-lg rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200 my-8">
+            <div className="relative w-full max-w-lg rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200 my-8 animate-fade-in-up">
               
               {/* Header */}
               <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
@@ -416,7 +405,7 @@ Děkuji.
         const getImageUrl = () => {
           if (usePlaceholder) {
             // Fallback - generátor obrázků, pokud se fotka nenajde
-            return `https://placehold.co/600x600/fff1f2/e11d48?text=${encodeURIComponent(product.name)}`;
+            return `https://placehold.co/600x600/fff1f2/e11d48?text=${encodeURIComponent(product.name.substring(0, 20))}`;
           }
           const extension = EXTENSIONS[extIndex];
           // Předpokládáme složku "images" ve stejném adresáři jako index.html
@@ -445,6 +434,9 @@ Děkuji.
               />
               <div className="absolute top-4 right-4 rounded-full bg-white/95 px-3 py-1 text-sm font-bold text-gray-900 shadow-sm backdrop-blur-sm">
                 {product.price} Kč
+              </div>
+              <div className="absolute top-4 left-4 rounded-full bg-rose-500/90 px-3 py-1 text-xs font-bold text-white shadow-sm backdrop-blur-sm">
+                #{product.id}
               </div>
             </div>
             
