@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Cukrářství Blahutovi - Katalog dortů</title>
     
-    <!-- ERROR HANDLER -->
+    <!-- Záchrana proti bílé stránce -->
     <script>
-      window.onerror = function(message, source, lineno, colno, error) {
-        document.getElementById('root-loading').innerHTML = 
-            '<div style="color:red; padding:20px; text-align:center;">' +
-            '<h2>Chyba načítání</h2>' +
-            '<p>' + message + '</p>' +
-            '</div>';
+      window.onerror = function(msg, url, line) {
+        var errBox = document.getElementById('error-box');
+        if (errBox) {
+            errBox.style.display = 'block';
+            errBox.innerHTML += '<p>' + msg + '</p>';
+        }
       };
     </script>
 
@@ -20,7 +20,7 @@
     <meta property="og:title" content="Cukrářství Blahutovi" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍰</text></svg>">
     
-    <!-- LIBS -->
+    <!-- Knihovny - CDN -->
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
@@ -33,14 +33,16 @@
       h1, h2, h3 { font-family: 'Playfair Display', serif; }
       .fade-in { animation: fadeIn 0.5s ease-in; }
       @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-      .scroll-down { animation: bounce 2s infinite; }
-      @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
+      
+      /* Styly pro záložní zobrazení (když React neněběhne) */
+      .fallback-card { border: 1px solid #eee; padding: 10px; margin: 10px; border-radius: 8px; text-align: center; }
+      .fallback-img { width: 100%; height: 200px; object-fit: cover; background: #fce7f3; }
     </style>
   <link rel="stylesheet" href="/index.css">
 </head>
   <body>
     
-    <!-- OBYČEJNÝ SKRIPT PRO DATA (Bezpečnější pro velká data) -->
+    <!-- DATA PRODUKTŮ -->
     <script>
       window.APP_DATA = {
         EMAIL_TO: "objednavky@cukrarstviblahutovi.cz",
@@ -113,31 +115,69 @@
       };
     </script>
 
-    <!-- React Root s Fallback obsahem -->
+    <!-- 
+      ZÁCHRANNÝ SKRIPT (Vanilla JS Fallback)
+      Tento kód se spustí okamžitě a vykreslí dorty ještě předtím, než se vůbec načte React.
+      Tím pádem uživatel VŽDY něco uvidí, i kdyby React selhal.
+    -->
     <div id="root">
-        <div id="root-loading" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; text-align:center;">
-            <div style="font-size: 24px; color: #e11d48; margin-bottom: 20px;">🍰</div>
-            <p style="font-size: 18px; color: #444;">Načítám katalog dortů...</p>
-            <p style="font-size: 14px; color: #888;">Čekám na data...</p>
+        <div id="static-content" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+            <!-- Hlavička -->
+            <div style="text-align: center; margin-bottom: 40px; padding: 40px 10px;">
+                <h1 style="font-size: 32px; color: #333; margin-bottom: 10px;">Cukrářství <span style="color:#e11d48">Blahutovi</span></h1>
+                <a href="https://www.cukrarstviblahutovi.cz/konfigurator-dortu/" style="display:inline-block; background: #e11d48; color: white; padding: 10px 20px; text-decoration: none; border-radius: 20px; font-weight: bold;">Sestavit vlastní dort</a>
+            </div>
+            
+            <!-- Fallback Grid (Bude nahrazen Reactem, pokud React najede) -->
+            <div id="fallback-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+                <!-- Zde se vygenerují dorty pomocí JS -->
+            </div>
         </div>
     </div>
 
-    <!-- REACT APLIKACE -->
+    <script>
+        // Okamžité vygenerování seznamu (Fallback)
+        (function() {
+            var grid = document.getElementById('fallback-grid');
+            if (!grid) return;
+            
+            var products = window.APP_DATA.PRODUCTS;
+            var html = '';
+            
+            for (var i = 0; i < products.length; i++) {
+                var p = products[i];
+                html += '<div class="fallback-card" style="border:1px solid #eee; border-radius:8px; overflow:hidden;">';
+                html += '<img src="images/' + p.id + '.jpg" loading="lazy" style="width:100%; height:250px; object-fit:cover; background:#f0f0f0;" onerror="this.src=\'https://placehold.co/300x300?text=Foto+' + p.id + '\'">';
+                html += '<div style="padding:15px;">';
+                html += '<h3 style="margin:0 0 10px 0; font-size:16px;">' + p.name + '</h3>';
+                html += '<p style="color:#666; font-size:14px;">' + p.description + '</p>';
+                html += '<div style="font-weight:bold; color:#e11d48; margin-top:10px;">' + p.price + ' Kč</div>';
+                html += '</div></div>';
+            }
+            grid.innerHTML = html;
+        })();
+    </script>
+
+    <div id="error-box" style="display:none; background: #fee2e2; color: #991b1b; padding: 20px; text-align: center; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;">
+        <strong>Diagnostika chyb:</strong>
+    </div>
+
+    <!-- REACT APLIKACE (Pokusí se "oživit" stránku) -->
     <script type="text/babel" data-presets="env,react">
       const { PRODUCTS, BRANCHES, EMAIL_TO, CONFIGURATOR_URL, MAIN_WEB_URL } = window.APP_DATA;
 
-      // Jednoduchý obrázek (bez složité logiky, aby neshazoval prohlížeč)
+      // Jednoduchý obrázek s detekcí chyb
       const SimpleImage = ({ id, alt }) => {
           const [src, setSrc] = React.useState(`images/${id}.jpg`);
-          const [errorCount, setErrorCount] = React.useState(0);
-
-          const handleError = () => {
+          const [tries, setTries] = React.useState(0);
+          
+          const handleError = (e) => {
               const extensions = ['png', 'jpeg', 'jfif', 'JPG', 'PNG'];
-              if (errorCount < extensions.length) {
-                  setSrc(`images/${id}.${extensions[errorCount]}`);
-                  setErrorCount(prev => prev + 1);
+              if (tries < extensions.length) {
+                  setSrc(`images/${id}.${extensions[tries]}`);
+                  setTries(t => t + 1);
               } else {
-                  // Fallback na placeholder
+                  // Fallback jen když vše selže
                   setSrc(`https://placehold.co/400x400/fce7f3/e11d48?text=Dort+${id}`);
               }
           };

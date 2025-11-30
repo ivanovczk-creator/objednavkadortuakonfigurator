@@ -1,6 +1,7 @@
 {
-  "name": "cukrarstvi-static",
-  "version": "1.0.0",
-  "description": "Statická stránka cukrárny",
-  "private": true
+  "name": "static-site",
+  "description": "Statická verze bez Node.js závislostí",
+  "scripts": {
+    "build": "echo 'No build needed'"
+  }
 }
