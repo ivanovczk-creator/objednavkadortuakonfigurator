@@ -5,40 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Cukrářství Blahutovi - Katalog dortů</title>
     
-    <!-- ERROR HANDLER: Abychom viděli chyby na obrazovce místo bílé stránky -->
+    <!-- ERROR HANDLER -->
     <script>
       window.onerror = function(message, source, lineno, colno, error) {
-        var loader = document.getElementById('initial-loader');
-        if(loader) loader.style.display = 'none'; // Schovat loader
-        
-        var errorDiv = document.getElementById('error-display');
-        if (!errorDiv) {
-          errorDiv = document.createElement('div');
-          errorDiv.id = 'error-display';
-          errorDiv.style.position = 'fixed';
-          errorDiv.style.top = '0';
-          errorDiv.style.left = '0';
-          errorDiv.style.width = '100%';
-          errorDiv.style.height = '100%';
-          errorDiv.style.background = 'white';
-          errorDiv.style.color = '#991b1b';
-          errorDiv.style.padding = '40px';
-          errorDiv.style.zIndex = '999999';
-          errorDiv.style.overflow = 'auto';
-          errorDiv.style.fontFamily = 'monospace';
-          errorDiv.innerHTML = '<h1 style="font-size: 24px; margin-bottom: 20px;">Omlouváme se, nastala chyba aplikace.</h1>';
-          document.body.prepend(errorDiv);
-        }
-        errorDiv.innerHTML += '<div style="background: #fee2e2; padding: 15px; border: 1px solid red; margin-bottom: 10px; border-radius: 8px;"><strong>CHYBA:</strong> ' + message + '<br><small>Soubor: ' + source + ' (Řádek: ' + lineno + ')</small></div>';
+        document.getElementById('root-loading').innerHTML = 
+            '<div style="color:red; padding:20px; text-align:center;">' +
+            '<h2>Chyba načítání</h2>' +
+            '<p>' + message + '</p>' +
+            '</div>';
       };
     </script>
 
     <meta name="description" content="Tradiční cukrárna s láskou k řemeslu. Objednejte si ty nejlepší dorty online." />
     <meta property="og:title" content="Cukrářství Blahutovi" />
-    <meta property="og:description" content="Katalog dortů a online objednávka." />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍰</text></svg>">
     
-    <!-- React & Tailwind -->
+    <!-- LIBS -->
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
@@ -47,30 +29,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     
     <style>
-      body { font-family: 'Lato', sans-serif; background-color: #ffffff; color: #333; margin: 0; }
+      body { font-family: 'Lato', sans-serif; background-color: #ffffff; color: #333; margin: 0; padding-bottom: 50px; }
       h1, h2, h3 { font-family: 'Playfair Display', serif; }
-      .loader { border: 4px solid #f3f3f3; border-top: 4px solid #e11d48; border-radius: 50%; width: 50px; height: 50px; animation: spin 0.8s linear infinite; margin: 20px auto; }
-      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
       .fade-in { animation: fadeIn 0.5s ease-in; }
       @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-      
-      /* Fix pro iOS a mobily */
-      .backdrop-blur { -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+      .scroll-down { animation: bounce 2s infinite; }
+      @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
     </style>
   <link rel="stylesheet" href="/index.css">
 </head>
   <body>
     
-    <!-- Loading Screen (zmizí jakmile React nastartuje) -->
-    <div id="initial-loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 50; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-        <div class="loader"></div>
-        <p style="color: #e11d48; font-weight: bold; font-size: 18px;">Načítám katalog...</p>
-    </div>
-
-    <!-- React Root -->
-    <div id="root"></div>
-
-    <!-- DATA -->
+    <!-- OBYČEJNÝ SKRIPT PRO DATA (Bezpečnější pro velká data) -->
     <script>
       window.APP_DATA = {
         EMAIL_TO: "objednavky@cukrarstviblahutovi.cz",
@@ -143,42 +113,44 @@
       };
     </script>
 
-    <!-- REACT APP -->
+    <!-- React Root s Fallback obsahem -->
+    <div id="root">
+        <div id="root-loading" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; text-align:center;">
+            <div style="font-size: 24px; color: #e11d48; margin-bottom: 20px;">🍰</div>
+            <p style="font-size: 18px; color: #444;">Načítám katalog dortů...</p>
+            <p style="font-size: 14px; color: #888;">Čekám na data...</p>
+        </div>
+    </div>
+
+    <!-- REACT APLIKACE -->
     <script type="text/babel" data-presets="env,react">
-      
       const { PRODUCTS, BRANCHES, EMAIL_TO, CONFIGURATOR_URL, MAIN_WEB_URL } = window.APP_DATA;
 
-      // KOMPONENTA: Chytrý obrázek s fallbackem
-      const ProductImage = ({ id, alt }) => {
-        // Seznam přípon, které zkoušíme postupně
-        const extensions = ['jpg', 'png', 'jpeg', 'jfif', 'JPG', 'PNG'];
-        const [tryIndex, setTryIndex] = React.useState(0);
-        const [isPlaceholder, setIsPlaceholder] = React.useState(false);
+      // Jednoduchý obrázek (bez složité logiky, aby neshazoval prohlížeč)
+      const SimpleImage = ({ id, alt }) => {
+          const [src, setSrc] = React.useState(`images/${id}.jpg`);
+          const [errorCount, setErrorCount] = React.useState(0);
 
-        const currentSrc = isPlaceholder 
-            ? `https://placehold.co/400x400/fecdd3/e11d48?text=Dort+${id}`
-            : `images/${id}.${extensions[tryIndex]}`;
+          const handleError = () => {
+              const extensions = ['png', 'jpeg', 'jfif', 'JPG', 'PNG'];
+              if (errorCount < extensions.length) {
+                  setSrc(`images/${id}.${extensions[errorCount]}`);
+                  setErrorCount(prev => prev + 1);
+              } else {
+                  // Fallback na placeholder
+                  setSrc(`https://placehold.co/400x400/fce7f3/e11d48?text=Dort+${id}`);
+              }
+          };
 
-        const handleError = () => {
-             const nextIndex = tryIndex + 1;
-             if (nextIndex < extensions.length) {
-                 // Zkusíme další příponu
-                 setTryIndex(nextIndex);
-             } else {
-                 // Došly přípony, dáme placeholder
-                 setIsPlaceholder(true);
-             }
-        };
-
-        return (
-            <img 
-                src={currentSrc} 
+          return (
+              <img 
+                src={src} 
                 alt={alt} 
                 onError={handleError}
-                className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                 loading="lazy"
-            />
-        );
+              />
+          );
       };
 
       const OrderForm = ({ product, onCancel }) => {
@@ -194,30 +166,30 @@
         return (
             <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 fade-in">
                 <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl relative">
-                    <button onClick={onCancel} className="absolute top-2 right-2 text-gray-400 hover:text-black p-2">✕</button>
-                    <h3 className="text-xl font-bold mb-4 font-serif">Objednat: {product.name}</h3>
+                    <button onClick={onCancel} className="absolute top-2 right-2 text-gray-400 hover:text-black p-2 text-2xl">&times;</button>
+                    <h3 className="text-xl font-bold mb-4 font-serif text-gray-900">Objednat: {product.name}</h3>
                     <form onSubmit={handleSubmit} className="space-y-3">
                         <label className="block">
-                            <span className="text-sm text-gray-700">Vaše jméno</span>
+                            <span className="text-sm text-gray-700 font-bold">Vaše jméno</span>
                             <input required className="w-full border p-2 rounded mt-1" value={formData.name} onChange={e=>setFormData({...formData, name:e.target.value})} />
                         </label>
                         <label className="block">
-                            <span className="text-sm text-gray-700">Telefon</span>
+                            <span className="text-sm text-gray-700 font-bold">Telefon</span>
                             <input required className="w-full border p-2 rounded mt-1" value={formData.phone} onChange={e=>setFormData({...formData, phone:e.target.value})} />
                         </label>
                         <label className="block">
-                            <span className="text-sm text-gray-700">Datum vyzvednutí (min +7 dní)</span>
+                            <span className="text-sm text-gray-700 font-bold">Datum vyzvednutí (min +7 dní)</span>
                             <input required type="date" className="w-full border p-2 rounded mt-1" value={formData.date} onChange={e=>setFormData({...formData, date:e.target.value})} />
                         </label>
                         <label className="block">
-                            <span className="text-sm text-gray-700">Pobočka</span>
+                            <span className="text-sm text-gray-700 font-bold">Pobočka</span>
                             <select className="w-full border p-2 rounded mt-1" value={formData.branch} onChange={e=>setFormData({...formData, branch:e.target.value})}>
                                 {BRANCHES.map(b => <option key={b} value={b}>{b}</option>)}
                             </select>
                         </label>
                         <div className="flex gap-2 mt-4 pt-2">
-                            <button type="button" onClick={onCancel} className="flex-1 bg-gray-100 py-3 rounded font-bold hover:bg-gray-200">Zrušit</button>
-                            <button type="submit" className="flex-1 bg-rose-600 text-white py-3 rounded font-bold hover:bg-rose-700">Odeslat e-mail</button>
+                            <button type="button" onClick={onCancel} className="flex-1 bg-gray-100 py-3 rounded font-bold text-gray-600 hover:bg-gray-200">Zrušit</button>
+                            <button type="submit" className="flex-1 bg-rose-600 text-white py-3 rounded font-bold hover:bg-rose-700">Odeslat</button>
                         </div>
                     </form>
                 </div>
@@ -228,54 +200,49 @@
       const App = () => {
         const [selected, setSelected] = React.useState(null);
 
-        // Hide loader safely
-        React.useEffect(() => {
-            const l = document.getElementById('initial-loader');
-            if(l) l.style.display = 'none';
-        }, []);
-
         return (
-            <div className="bg-white min-h-screen pb-20">
-                {/* NAVIGATION */}
-                <div className="fixed top-0 left-0 w-full p-2 z-40 flex justify-center pointer-events-none">
-                    <a href={MAIN_WEB_URL} className="pointer-events-auto bg-white/95 backdrop-blur px-6 py-3 rounded-full shadow-lg border border-gray-200 text-rose-600 font-bold hover:bg-gray-50 transition transform hover:scale-105 flex items-center gap-2 text-sm uppercase tracking-wide">
+            <div className="bg-white min-h-screen">
+                {/* Fixed Nav Button */}
+                <div className="fixed top-0 left-0 right-0 p-2 z-40 flex justify-center pointer-events-none">
+                    <a href={MAIN_WEB_URL} className="pointer-events-auto bg-white/95 backdrop-blur px-6 py-2 rounded-full shadow-lg border border-gray-200 text-rose-600 font-bold hover:bg-gray-50 transition transform hover:scale-105 flex items-center gap-2 text-sm uppercase tracking-wide">
                         <span>⬅</span> Zpět na hlavní web
                     </a>
                 </div>
 
-                {/* HERO */}
-                <div className="bg-white pt-24 pb-8 px-4 text-center border-b border-rose-100">
-                    <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-2 font-serif">
+                {/* Compact Hero */}
+                <div className="bg-white pt-16 pb-6 px-4 text-center border-b border-rose-100">
+                    <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2 font-serif">
                         Cukrářství <span className="text-rose-600">Blahutovi</span>
                     </h1>
-                    <p className="text-gray-500 mb-6 max-w-lg mx-auto">Tradiční výroba od roku 1995</p>
+                    <p className="text-gray-500 mb-4 max-w-lg mx-auto text-sm">Tradiční výroba od roku 1995</p>
                     
-                    <a href={CONFIGURATOR_URL} className="inline-block bg-rose-600 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-rose-700 transition transform hover:scale-105 mb-4">
+                    <a href={CONFIGURATOR_URL} className="inline-block bg-rose-600 text-white px-6 py-2 rounded-full font-bold shadow-md hover:bg-rose-700 transition transform hover:scale-105 mb-4 text-sm">
                         🍰 Sestavit vlastní dort
                     </a>
+                    <div className="text-rose-400 mt-2 scroll-down text-2xl">⌄</div>
                 </div>
 
-                {/* PRODUCTS LIST */}
+                {/* Products Grid */}
                 <div className="max-w-7xl mx-auto px-4 py-8">
                     <div className="flex justify-between items-center mb-6 px-2 border-b pb-2">
                         <h2 className="text-xl font-bold text-gray-800">Katalog dortů</h2>
-                        <span className="text-sm font-bold text-rose-600 bg-rose-50 px-3 py-1 rounded-full">{PRODUCTS.length} dortů</span>
+                        <span className="text-xs font-bold text-white bg-rose-600 px-2 py-1 rounded">Načteno {PRODUCTS.length} položek</span>
                     </div>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {PRODUCTS.map(p => (
-                            <div key={p.id} className="bg-white rounded-lg shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 flex flex-col fade-in">
+                            <div key={p.id} className="bg-white rounded-lg shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 flex flex-col fade-in group">
                                 <div className="aspect-square overflow-hidden relative bg-gray-50">
-                                    <ProductImage id={p.id} alt={p.name} />
-                                    <div className="absolute top-2 right-2 flex gap-1">
-                                        <span className="bg-white/90 backdrop-blur px-3 py-1 rounded-full text-sm font-bold shadow-md text-gray-800">{p.price} Kč</span>
+                                    <SimpleImage id={p.id} alt={p.name} />
+                                    <div className="absolute top-2 right-2">
+                                        <span className="bg-white/90 backdrop-blur px-2 py-1 rounded-full text-sm font-bold shadow-md text-gray-800">{p.price} Kč</span>
                                     </div>
                                     <span className="absolute top-2 left-2 bg-rose-600 text-white px-2 py-1 rounded text-xs font-bold shadow-sm">#{p.id}</span>
                                 </div>
                                 <div className="p-4 flex flex-col flex-1">
-                                    <h3 className="font-bold text-lg mb-1 leading-tight text-gray-800">{p.name}</h3>
-                                    <p className="text-gray-500 text-sm mb-4 line-clamp-2">{p.description}</p>
-                                    <button onClick={() => setSelected(p)} className="mt-auto w-full border-2 border-rose-100 text-rose-600 py-2 rounded-lg font-bold hover:bg-rose-600 hover:text-white transition">
+                                    <h3 className="font-bold text-base mb-1 leading-tight text-gray-800 group-hover:text-rose-600 transition">{p.name}</h3>
+                                    <p className="text-gray-500 text-xs mb-4">{p.description}</p>
+                                    <button onClick={() => setSelected(p)} className="mt-auto w-full bg-rose-50 text-rose-600 border border-rose-100 py-2 rounded-lg font-bold hover:bg-rose-600 hover:text-white transition text-sm">
                                         Objednat
                                     </button>
                                 </div>
@@ -284,10 +251,10 @@
                     </div>
                 </div>
 
-                {/* FOOTER */}
-                <div className="text-center text-gray-400 text-sm mt-10 pb-10 border-t pt-10">
-                    <p className="mb-2">&copy; Cukrářství Blahutovi | Katalog běží na Netlify</p>
-                    <a href={MAIN_WEB_URL} className="underline hover:text-rose-600 inline-block font-bold">Zpět na hlavní stránky</a>
+                {/* Footer */}
+                <div className="text-center text-gray-400 text-xs mt-8 pt-8 border-t">
+                    <p className="mb-2">Katalog běží na Netlify</p>
+                    <a href={MAIN_WEB_URL} className="underline hover:text-rose-600">Zpět na hlavní stránky</a>
                 </div>
 
                 {selected && <OrderForm product={selected} onCancel={() => setSelected(null)} />}
