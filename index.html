@@ -117,6 +117,7 @@
       
       // --- CONSTANTS & DATA ---
       const EMAIL_TO = "objednavky@cukrarstviblahutovi.cz";
+      const MAIN_WEB_URL = "https://www.cukrarstviblahutovi.cz";
       const CONFIGURATOR_URL = "https://www.cukrarstviblahutovi.cz/konfigurator-dortu/";
       
       const BRANCHES = [
@@ -550,7 +551,9 @@ Děkuji.
           <div className="min-h-screen bg-stone-50 text-stone-800 font-sans selection:bg-rose-200 selection:text-rose-900">
             <nav className="absolute top-0 left-0 w-full p-6 z-20">
               <div className="container mx-auto flex justify-between items-center">
-                 {/* Empty nav as requested */}
+                 <a href={MAIN_WEB_URL} className="flex items-center gap-2 text-stone-600 hover:text-rose-600 font-bold bg-white/80 backdrop-blur px-4 py-2 rounded-full shadow-sm transition-all hover:shadow-md">
+                    <span>←</span> Zpět na hlavní web
+                 </a>
               </div>
             </nav>
 
@@ -589,10 +592,9 @@ Děkuji.
                 </div>
                 
                 <div className="flex flex-wrap justify-center gap-8 text-sm font-medium">
-                  <a href="#" className="hover:text-white transition-colors">O nás</a>
-                  <a href="#" className="hover:text-white transition-colors">Pobočky</a>
-                  <a href="#" className="hover:text-white transition-colors">Alergeny</a>
-                  <a href="#" className="hover:text-white transition-colors">Kontakt</a>
+                  <a href={MAIN_WEB_URL} className="hover:text-white transition-colors">O nás</a>
+                  <a href={MAIN_WEB_URL} className="hover:text-white transition-colors">Pobočky</a>
+                  <a href={MAIN_WEB_URL} className="hover:text-white transition-colors">Kontakt</a>
                 </div>
 
                 <div className="pt-8 border-t border-stone-800">
