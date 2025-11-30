@@ -6,434 +6,232 @@
     <title>Cukrářství Blahutovi - Katalog dortů</title>
     <meta name="description" content="Tradiční cukrárna s láskou k řemeslu. Objednejte si ty nejlepší dorty online." />
     
-    <!-- Social Media Tags (Open Graph) -->
+    <!-- Social Media Tags -->
     <meta property="og:title" content="Cukrářství Blahutovi" />
-    <meta property="og:description" content="Tradiční cukrárna s láskou k řemeslu. Sestavte si vlastní dort nebo vyberte z naší nabídky." />
-    <meta property="og:type" content="website" />
+    <meta property="og:description" content="Katalog dortů a online objednávka." />
     <meta property="og:image" content="https://placehold.co/1200x630/fecdd3/881337?text=Cukrářství+Blahutovi" />
     
-    <!-- Favicon (Cake Emoji) -->
+    <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍰</text></svg>">
     
-    <!-- React & ReactDOM (CDNJS - More stable) -->
+    <!-- React & Tailwind -->
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-    
-    <!-- Babel Standalone -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
-
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: '#e11d48', // rose-600
-              secondary: '#fca5a5', // rose-300
-              cream: '#fff1f2', // rose-50
-              dark: '#44403c', // stone-700
-            },
-            fontFamily: {
-              serif: ['"Playfair Display"', 'serif'],
-              sans: ['"Lato"', 'sans-serif'],
-            },
-            animation: {
-              'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
-            },
-            keyframes: {
-              fadeInUp: {
-                '0%': { opacity: '0', transform: 'translateY(20px)' },
-                '100%': { opacity: '1', transform: 'translateY(0)' },
-              }
-            }
-          }
-        }
-      }
-    </script>
 
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     
     <style>
-      body {
-        font-family: 'Lato', sans-serif;
-        background-color: #ffffff;
-        color: #44403c;
-      }
-      h1, h2, h3, h4, h5, h6 {
-        font-family: 'Playfair Display', serif;
-      }
-      body.modal-open {
-        overflow: hidden;
-      }
-      html {
-        scroll-behavior: smooth;
-      }
-      #error-container {
-        display: none;
-        padding: 20px;
-        background: #fee2e2;
-        color: #991b1b;
-        border: 1px solid #f87171;
-        margin: 20px;
-        border-radius: 8px;
-        font-family: sans-serif;
-        z-index: 9999;
-        position: relative;
-        text-align: center;
-      }
-      /* Loading Spinner */
-      .initial-loader {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        width: 100%;
-        position: fixed;
-        top: 0;
-        left: 0;
-        background: white;
-        z-index: 9999;
-        transition: opacity 0.5s ease-out;
-      }
-      .initial-loader.fade-out {
-        opacity: 0;
-        pointer-events: none;
-      }
+      body { font-family: 'Lato', sans-serif; background-color: #fff1f2; color: #333; }
+      h1, h2, h3 { font-family: 'Playfair Display', serif; }
+      .loader { border: 4px solid #f3f3f3; border-top: 4px solid #e11d48; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
   <link rel="stylesheet" href="/index.css">
 </head>
   <body>
-    <!-- Error Handler -->
-    <div id="error-container"></div>
     
-    <!-- Initial Loader (Visible before React mounts) -->
-    <div id="initial-loader" class="initial-loader">
-      <div class="text-6xl animate-bounce mb-4">🍰</div>
-      <div class="text-xl text-rose-600 font-serif font-bold">Načítám cukrárnu...</div>
+    <!-- Loading Element (zmizí po načtení Reactu) -->
+    <div id="initial-loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div class="loader"></div>
+        <p style="color: #e11d48; font-weight: bold;">Načítám cukrárnu...</p>
     </div>
 
     <!-- React Root -->
     <div id="root"></div>
 
-    <!-- DATA SCRIPT (Native JS for safety and speed) -->
+    <!-- DATA (Odděleně pro stabilitu) -->
     <script>
-      // Global Data Objects
       window.APP_DATA = {
         EMAIL_TO: "objednavky@cukrarstviblahutovi.cz",
         MAIN_WEB_URL: "https://www.cukrarstviblahutovi.cz",
         CONFIGURATOR_URL: "https://www.cukrarstviblahutovi.cz/konfigurator-dortu/",
-        BRANCHES: [
-          "Hlavní prodejna (Centrum)",
-          "Pobočka Náměstí",
-          "Výdejna Sklad"
-        ],
+        BRANCHES: ["Hlavní prodejna", "Pobočka Náměstí", "Sklad"],
         PRODUCTS: [
-          { id: 1, name: "V MARCIPÁNU, 2 FIGURKY", price: 1800, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 1" },
-          { id: 2, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", price: 1900, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 2" },
-          { id: 3, name: "2 PATRA, V MARCIPÁNU", price: 2800, description: "Orientační počet porcí: 20", imageAlt: "Dort č. 3" },
-          { id: 4, name: "OBMAZANÝ, SNĚHOVÉ OZDOBY, MAKRONKY", price: 1600, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 4" },
-          { id: 5, name: "V MARCIPÁNU, 2 MARCIPÁNOVÉ FIGURKY", price: 1600, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 5" },
-          { id: 6, name: "V MARCIPÁNU (3,5 Kg)", price: 2100, description: "Orientační počet porcí: 15-20", imageAlt: "Dort č. 6" },
-          { id: 7, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", price: 1700, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 7" },
-          { id: 8, name: "V MARCIPÁNU, 1 MARCIPÁNOVÁ FIGURKA", price: 1600, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 8" },
-          { id: 9, name: "MARCIPÁNOVÁ PLACKA, JEDLÝ PAPÍR", price: 1400, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 9" },
-          { id: 10, name: "V MARCIPÁNU, OZDOBY, JEDLÝ PAPÍR", price: 2000, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 10" },
-          { id: 11, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", price: 1800, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 11" },
-          { id: 12, name: "MODELOVANÝ V MARCIPÁNU - BEZUBKA", price: 3100, description: "Orientační počet porcí: 25", imageAlt: "Dort č. 12" },
-          { id: 13, name: "V MARCIPÁNU, JEDLÝ PAPÍR", price: 1400, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 13" },
-          { id: 14, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", price: 2700, description: "Orientační počet porcí: 15-20", imageAlt: "Dort č. 14" },
-          { id: 15, name: "V MARCIPÁNU", price: 1500, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 15" },
-          { id: 16, name: "V MARCIPÁNU, 1 MARCIPÁNOVÁ FIGURKA", price: 800, description: "Velikost: 6-8 porcí", imageAlt: "Dort č. 16" },
-          { id: 17, name: "V MARCIPÁNU", price: 2300, description: "Orientační počet porcí: 14", imageAlt: "Dort č. 17" },
-          { id: 18, name: "ČÍSLICE V MARCIPÁNU (4,5 Kg)", price: 2900, description: "Orientační počet porcí: 25-30", imageAlt: "Dort č. 18" },
-          { id: 19, name: "V MARCIPÁNU, JEDLÝ PAPÍR", price: 1600, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 19" },
-          { id: 20, name: "V MARCIPÁNU, JEDLÝ PAPÍR", price: 1500, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 20" },
-          { id: 21, name: "V MARCIPÁNU, JEDLÝ PAPÍR", price: 1400, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 21" },
-          { id: 22, name: "V MARCIPÁNU, FIGURKY", price: 1900, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 22" },
-          { id: 23, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", price: 1100, description: "Velikost: 8-10 porcí", imageAlt: "Dort č. 23" },
-          { id: 24, name: "V MARCIPÁNU, JEDLÝ PAPÍR", price: 1400, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 24" },
-          { id: 25, name: "V MARCIPÁNU, BAGR", price: 1700, description: "Velikost: 8-10 porcí", imageAlt: "Dort č. 25" },
-          { id: 26, name: "V MARCIPÁNU, MARCIPÁNOVÉ FIGURKY", price: 1700, description: "Velikost: 8-10 porcí", imageAlt: "Dort č. 26" },
-          { id: 27, name: "V ČOKOLÁDĚ, OZDOBY, JEDLÝ PAPÍR (2,5 Kg)", price: 1750, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 27" },
-          { id: 28, name: "OBSYPANÝ PIŠKOTEM, MARCIPÁNOVÉ FIGURKY", price: 1650, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 28" },
-          { id: 29, name: "OBMAZANÝ, OZDOBY, JEDLÝ PAPÍR", price: 2100, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 29" },
-          { id: 30, name: "2 PATRA S ČOKOLÁDOU, OZDOBY, JEDLÝ P.", price: 2700, description: "Orientační počet porcí: 18-20", imageAlt: "Dort č. 30" },
-          { id: 31, name: "2 PATRA V MARCIPÁNU, BING", price: 3000, description: "Orientační počet porcí: 18-20", imageAlt: "Dort č. 31" },
-          { id: 32, name: "V MARCIPÁNU, 6 MARCIPÁNOVÝCH FIGUREK PAW", price: 2500, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 32" },
-          { id: 33, name: "V MARCIPÁNU, MARCIPÁNOVÉ FIGURKY A OZDOBY", price: 2100, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 33" },
-          { id: 34, name: "V MARCIPÁNU, 1 MARCIPÁNOVÁ FIGURKA", price: 1350, description: "Velikost: 8-10 porcí", imageAlt: "Dort č. 34" },
-          { id: 35, name: "V MARCIPÁNU, 1 MARCIPÁNOVÁ FIGURKA", price: 1350, description: "Velikost: 8-10 porcí", imageAlt: "Dort č. 35" },
-          { id: 36, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", price: 1900, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 36" },
-          { id: 37, name: "V MARCIPÁNU, JEDLÝ PAPÍR, FIGURKA", price: 1700, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 37" },
-          { id: 38, name: "MARCIPÁN, KRÉM, OVOCE", price: 1500, description: "Velikost: 10-12 porcí", imageAlt: "Dort č. 38" },
-          { id: 39, name: "OBMAZANÝ, OZDOBY, JEDLÝ PAPÍR, OVOCE", price: 1250, description: "Orientační počet porcí: 10", imageAlt: "Dort č. 39" },
-          { id: 40, name: "OBMAZANÝ, ČOKOLÁDA, OVOCE", price: 2000, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 40" },
-          { id: 41, name: "OBMAZANÝ, ČOKOLÁDOVÝ OBSYP, OVOCE", price: 3200, description: "Orientační počet porcí: 25", imageAlt: "Dort č. 41" },
-          { id: 42, name: "NAHÝ DORT, OVOCE", price: 1300, description: "Velikost: 8-10 porcí", imageAlt: "Dort č. 42" },
-          { id: 43, name: "ČOKOLÁDOVÝ PAŘÍŽ, MALINY", price: 700, description: "Orientační počet porcí: 10", imageAlt: "Dort č. 43" },
-          { id: 44, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", price: 2200, description: "Orientační počet porcí: 15-20", imageAlt: "Dort č. 44" },
-          { id: 45, name: "V ČOKOLÁDĚ, MARCIPÁNOVÉ OZDOBY", price: 2100, description: "Orientační počet porcí: 15-20", imageAlt: "Dort č. 45" },
-          { id: 46, name: "MALÉ SRDCE", price: 450, description: "Orientační počet porcí: 6", imageAlt: "Dort č. 46" },
-          { id: 47, name: "V ČOKOLÁDĚ, MARCIPÁNOVÉ OZDOBY", price: 3300, description: "Orientační počet porcí: 20-25", imageAlt: "Dort č. 47" },
-          { id: 48, name: "V ČOKOLÁDĚ, MARCIPÁNOVÉ OZDOBY", price: 700, description: "Orientační počet porcí: 6", imageAlt: "Dort č. 48" },
-          { id: 49, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", price: 1800, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 49" },
-          { id: 50, name: "MINI ROLÁDY", price: 200, description: "Orientační počet porcí: 10", imageAlt: "Dort č. 50" },
-          { id: 51, name: "OBMAZANÝ, OVOCE", price: 5500, description: "Orientační počet porcí: 40-50", imageAlt: "Dort č. 51" },
-          { id: 52, name: "BÍLÝ FONDÁN, OVOCE", price: 2800, description: "Orientační počet porcí: 15-20", imageAlt: "Dort č. 52" },
-          { id: 53, name: "NAHÝ DORT, OVOCE (5,5 Kg)", price: 3500, description: "Orientační počet porcí: 20-25", imageAlt: "Dort č. 53" },
-          { id: 54, name: "OBMAZANÝ, ŽIVÉ KVĚTY", price: 3300, description: "Orientační počet porcí: 20-25", imageAlt: "Dort č. 54" },
-          { id: 55, name: "SVATEBNÍ A DĚKOVACÍ DORTY V MARCIPÁNU", price: 5000, description: "Orientační počet porcí: 35-40", imageAlt: "Dort č. 55" },
-          { id: 56, name: "OBMAZANÝ, ČOKOLÁDOVÝ OBSYP, OZDOBY", price: 3300, description: "Orientační počet porcí: 20-25", imageAlt: "Dort č. 56" },
-          { id: 57, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", price: 2900, description: "Orientační počet porcí: 20-25", imageAlt: "Dort č. 57" },
-          { id: 58, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", price: 3000, description: "Orientační počet porcí: 20-25", imageAlt: "Dort č. 58" },
-          { id: 59, name: "V MARCIPÁNU", price: 1500, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 59" },
-          { id: 60, name: "V MARCIPÁNU, JEDLÝ PAPÍR", price: 2500, description: "Orientační počet porcí: 15-20", imageAlt: "Dort č. 60" },
-          { id: 61, name: "V MARCIPÁNU, JEDLÝ PAPÍR, ČOKO HOBLINKY", price: 3000, description: "Orientační počet porcí: 15-20", imageAlt: "Dort č. 61" }
+          { id: 1, name: "V MARCIPÁNU, 2 FIGURKY", price: 1800, description: "Orientační počet porcí: 12" },
+          { id: 2, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", price: 1900, description: "Orientační počet porcí: 12" },
+          { id: 3, name: "2 PATRA, V MARCIPÁNU", price: 2800, description: "Orientační počet porcí: 20" },
+          { id: 4, name: "OBMAZANÝ, SNĚHOVÉ OZDOBY, MAKRONKY", price: 1600, description: "Orientační počet porcí: 12" },
+          { id: 5, name: "V MARCIPÁNU, 2 MARCIPÁNOVÉ FIGURKY", price: 1600, description: "Orientační počet porcí: 12" },
+          { id: 6, name: "V MARCIPÁNU (3,5 Kg)", price: 2100, description: "Orientační počet porcí: 15-20" },
+          { id: 7, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", price: 1700, description: "Orientační počet porcí: 12" },
+          { id: 8, name: "V MARCIPÁNU, 1 MARCIPÁNOVÁ FIGURKA", price: 1600, description: "Orientační počet porcí: 12" },
+          { id: 9, name: "MARCIPÁNOVÁ PLACKA, JEDLÝ PAPÍR", price: 1400, description: "Orientační počet porcí: 12" },
+          { id: 10, name: "V MARCIPÁNU, OZDOBY, JEDLÝ PAPÍR", price: 2000, description: "Orientační počet porcí: 12" },
+          { id: 11, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", price: 1800, description: "Orientační počet porcí: 12" },
+          { id: 12, name: "MODELOVANÝ V MARCIPÁNU - BEZUBKA", price: 3100, description: "Orientační počet porcí: 25" },
+          { id: 13, name: "V MARCIPÁNU, JEDLÝ PAPÍR", price: 1400, description: "Orientační počet porcí: 12" },
+          { id: 14, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", price: 2700, description: "Orientační počet porcí: 15-20" },
+          { id: 15, name: "V MARCIPÁNU", price: 1500, description: "Orientační počet porcí: 12" },
+          { id: 16, name: "V MARCIPÁNU, 1 MARCIPÁNOVÁ FIGURKA", price: 800, description: "Velikost: 6-8 porcí" },
+          { id: 17, name: "V MARCIPÁNU", price: 2300, description: "Orientační počet porcí: 14" },
+          { id: 18, name: "ČÍSLICE V MARCIPÁNU (4,5 Kg)", price: 2900, description: "Orientační počet porcí: 25-30" },
+          { id: 19, name: "V MARCIPÁNU, JEDLÝ PAPÍR", price: 1600, description: "Orientační počet porcí: 12" },
+          { id: 20, name: "V MARCIPÁNU, JEDLÝ PAPÍR", price: 1500, description: "Orientační počet porcí: 12" },
+          { id: 21, name: "V MARCIPÁNU, JEDLÝ PAPÍR", price: 1400, description: "Orientační počet porcí: 12" },
+          { id: 22, name: "V MARCIPÁNU, FIGURKY", price: 1900, description: "Orientační počet porcí: 12" },
+          { id: 23, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", price: 1100, description: "Velikost: 8-10 porcí" },
+          { id: 24, name: "V MARCIPÁNU, JEDLÝ PAPÍR", price: 1400, description: "Orientační počet porcí: 12" },
+          { id: 25, name: "V MARCIPÁNU, BAGR", price: 1700, description: "Velikost: 8-10 porcí" },
+          { id: 26, name: "V MARCIPÁNU, MARCIPÁNOVÉ FIGURKY", price: 1700, description: "Velikost: 8-10 porcí" },
+          { id: 27, name: "V ČOKOLÁDĚ, OZDOBY, JEDLÝ PAPÍR (2,5 Kg)", price: 1750, description: "Orientační počet porcí: 12" },
+          { id: 28, name: "OBSYPANÝ PIŠKOTEM, MARCIPÁNOVÉ FIGURKY", price: 1650, description: "Orientační počet porcí: 12" },
+          { id: 29, name: "OBMAZANÝ, OZDOBY, JEDLÝ PAPÍR", price: 2100, description: "Orientační počet porcí: 12" },
+          { id: 30, name: "2 PATRA S ČOKOLÁDOU, OZDOBY, JEDLÝ P.", price: 2700, description: "Orientační počet porcí: 18-20" },
+          { id: 31, name: "2 PATRA V MARCIPÁNU, BING", price: 3000, description: "Orientační počet porcí: 18-20" },
+          { id: 32, name: "V MARCIPÁNU, 6 MARCIPÁNOVÝCH FIGUREK PAW", price: 2500, description: "Orientační počet porcí: 12" },
+          { id: 33, name: "V MARCIPÁNU, MARCIPÁNOVÉ FIGURKY A OZDOBY", price: 2100, description: "Orientační počet porcí: 12" },
+          { id: 34, name: "V MARCIPÁNU, 1 MARCIPÁNOVÁ FIGURKA", price: 1350, description: "Velikost: 8-10 porcí" },
+          { id: 35, name: "V MARCIPÁNU, 1 MARCIPÁNOVÁ FIGURKA", price: 1350, description: "Velikost: 8-10 porcí" },
+          { id: 36, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", price: 1900, description: "Orientační počet porcí: 12" },
+          { id: 37, name: "V MARCIPÁNU, JEDLÝ PAPÍR, FIGURKA", price: 1700, description: "Orientační počet porcí: 12" },
+          { id: 38, name: "MARCIPÁN, KRÉM, OVOCE", price: 1500, description: "Velikost: 10-12 porcí" },
+          { id: 39, name: "OBMAZANÝ, OZDOBY, JEDLÝ PAPÍR, OVOCE", price: 1250, description: "Orientační počet porcí: 10" },
+          { id: 40, name: "OBMAZANÝ, ČOKOLÁDA, OVOCE", price: 2000, description: "Orientační počet porcí: 12" },
+          { id: 41, name: "OBMAZANÝ, ČOKOLÁDOVÝ OBSYP, OVOCE", price: 3200, description: "Orientační počet porcí: 25" },
+          { id: 42, name: "NAHÝ DORT, OVOCE", price: 1300, description: "Velikost: 8-10 porcí" },
+          { id: 43, name: "ČOKOLÁDOVÝ PAŘÍŽ, MALINY", price: 700, description: "Orientační počet porcí: 10" },
+          { id: 44, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", price: 2200, description: "Orientační počet porcí: 15-20" },
+          { id: 45, name: "V ČOKOLÁDĚ, MARCIPÁNOVÉ OZDOBY", price: 2100, description: "Orientační počet porcí: 15-20" },
+          { id: 46, name: "MALÉ SRDCE", price: 450, description: "Orientační počet porcí: 6" },
+          { id: 47, name: "V ČOKOLÁDĚ, MARCIPÁNOVÉ OZDOBY", price: 3300, description: "Orientační počet porcí: 20-25" },
+          { id: 48, name: "V ČOKOLÁDĚ, MARCIPÁNOVÉ OZDOBY", price: 700, description: "Orientační počet porcí: 6" },
+          { id: 49, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", price: 1800, description: "Orientační počet porcí: 12" },
+          { id: 50, name: "MINI ROLÁDY", price: 200, description: "Orientační počet porcí: 10" },
+          { id: 51, name: "OBMAZANÝ, OVOCE", price: 5500, description: "Orientační počet porcí: 40-50" },
+          { id: 52, name: "BÍLÝ FONDÁN, OVOCE", price: 2800, description: "Orientační počet porcí: 15-20" },
+          { id: 53, name: "NAHÝ DORT, OVOCE (5,5 Kg)", price: 3500, description: "Orientační počet porcí: 20-25" },
+          { id: 54, name: "OBMAZANÝ, ŽIVÉ KVĚTY", price: 3300, description: "Orientační počet porcí: 20-25" },
+          { id: 55, name: "SVATEBNÍ A DĚKOVACÍ DORTY V MARCIPÁNU", price: 5000, description: "Orientační počet porcí: 35-40" },
+          { id: 56, name: "OBMAZANÝ, ČOKOLÁDOVÝ OBSYP, OZDOBY", price: 3300, description: "Orientační počet porcí: 20-25" },
+          { id: 57, name: "V MARCIPÁNU, MARCIPÁNOVÉ OZDOBY", price: 2900, description: "Orientační počet porcí: 20-25" },
+          { id: 58, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", price: 3000, description: "Orientační počet porcí: 20-25" },
+          { id: 59, name: "V MARCIPÁNU", price: 1500, description: "Orientační počet porcí: 12" },
+          { id: 60, name: "V MARCIPÁNU, JEDLÝ PAPÍR", price: 2500, description: "Orientační počet porcí: 15-20" },
+          { id: 61, name: "V MARCIPÁNU, JEDLÝ PAPÍR, ČOKO HOBLINKY", price: 3000, description: "Orientační počet porcí: 15-20" }
         ]
       };
     </script>
 
-    <!-- Global Error Handler Script -->
-    <script>
-      window.onerror = function(message, source, lineno, colno, error) {
-        var container = document.getElementById('error-container');
-        var loader = document.getElementById('initial-loader');
-        if(loader) loader.style.display = 'none';
-        
-        container.style.display = 'block';
-        container.innerHTML = '<strong>Omlouváme se, nastala chyba aplikace:</strong><br>' + message + 
-        '<br><small>Prosím, zkuste obnovit stránku (Ctrl+F5).</small>';
-        console.error("Global Error:", error);
-      };
-    </script>
-
-    <!-- REACT APPLICATION -->
+    <!-- REACT APP -->
     <script type="text/babel" data-presets="env,react">
       
       const { PRODUCTS, BRANCHES, EMAIL_TO, CONFIGURATOR_URL, MAIN_WEB_URL } = window.APP_DATA;
 
-      // --- COMPONENTS ---
-
-      const Button = ({ children, variant = 'primary', size = 'md', fullWidth = false, className = '', ...props }) => {
-        const baseStyles = "inline-flex items-center justify-center rounded-full font-bold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
-        const variants = {
-          primary: "bg-rose-600 hover:bg-rose-700 text-white shadow-lg hover:shadow-xl focus:ring-rose-500",
-          secondary: "bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 shadow-sm hover:shadow-md focus:ring-rose-200",
-        };
-        const sizes = {
-          sm: "px-3 py-1.5 text-sm",
-          md: "px-6 py-3 text-base",
-          lg: "px-8 py-4 text-lg",
-          xl: "px-10 py-5 text-xl uppercase tracking-wide",
+      // 1. IMAGE COMPONENT (Simplified)
+      const ProductImage = ({ id, alt }) => {
+        // Simple logic: Try JPG, if error, fallback to placeholder. Fast and reliable.
+        const [src, setSrc] = React.useState(`images/${id}.jpg`);
+        const handleError = () => {
+             setSrc(`https://placehold.co/400x400/fff1f2/e11d48?text=Dort+${id}`);
         };
         return (
-          <button className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${fullWidth ? "w-full" : ""} ${className}`} {...props}>
-            {children}
-          </button>
+            <img 
+                src={src} 
+                alt={alt} 
+                onError={handleError}
+                className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                loading="lazy"
+            />
         );
       };
 
-      const Modal = ({ isOpen, onClose, title, children }) => {
-        React.useEffect(() => {
-          document.body.classList.toggle('modal-open', isOpen);
-          return () => document.body.classList.remove('modal-open');
-        }, [isOpen]);
-
-        if (!isOpen) return null;
-
-        return (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/50 p-4 backdrop-blur-sm transition-opacity">
-            <div className="relative w-full max-w-lg rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200 my-8 animate-fade-in-up">
-              <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
-                <h3 className="text-xl font-serif font-bold text-gray-900">{title}</h3>
-                <button onClick={onClose} className="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-              </div>
-              <div className="p-6">{children}</div>
-            </div>
-          </div>
-        );
-      };
-
+      // 2. MODAL & FORM
       const OrderForm = ({ product, onCancel }) => {
-        const getMinDate = () => {
-          const date = new Date();
-          date.setDate(date.getDate() + 7);
-          return date.toISOString().split('T')[0];
-        };
-
-        const [formData, setFormData] = React.useState({
-          name: '', phone: '', date: getMinDate(), branch: BRANCHES[0], notes: ''
-        });
+        const [formData, setFormData] = React.useState({ name: '', phone: '', date: '', branch: BRANCHES[0] });
 
         const handleSubmit = (e) => {
-          e.preventDefault();
-          const subject = encodeURIComponent(`Objednávka dortu: ${product.name}`);
-          const body = encodeURIComponent(`Dobrý den,\n\nMám zájem o závaznou objednávku dortu.\n\nDETAILY PRODUKTU:\nDort: ${product.name}\nCena: ${product.price} Kč\nID: ${product.id}\n\nÚDAJE:\nJméno: ${formData.name}\nTelefon: ${formData.phone}\nDatum vyzvednutí: ${formData.date}\nPobočka: ${formData.branch}\nPoznámka: ${formData.notes || '-'}`);
-          window.location.href = `mailto:${EMAIL_TO}?subject=${subject}&body=${body}`;
-          setTimeout(onCancel, 1000);
+            e.preventDefault();
+            const body = `Dort: ${product.name} (${product.id})\nCena: ${product.price} Kč\n\nJméno: ${formData.name}\nTelefon: ${formData.phone}\nDatum: ${formData.date}\nPobočka: ${formData.branch}`;
+            window.location.href = `mailto:${EMAIL_TO}?subject=Objednávka dortu č. ${product.id}&body=${encodeURIComponent(body)}`;
+            onCancel();
         };
 
         return (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="rounded-lg bg-rose-50 p-4 mb-4 border border-rose-100">
-              <div className="flex justify-between items-center">
-                <p className="text-lg font-bold text-gray-900">{product.name}</p>
-                <p className="text-lg font-semibold text-rose-600">{product.price} Kč</p>
-              </div>
+            <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl animate-fade-in-up">
+                    <h3 className="text-xl font-bold mb-4 font-serif">Objednat: {product.name}</h3>
+                    <form onSubmit={handleSubmit} className="space-y-3">
+                        <input required placeholder="Vaše jméno" className="w-full border p-2 rounded" value={formData.name} onChange={e=>setFormData({...formData, name:e.target.value})} />
+                        <input required placeholder="Telefon" className="w-full border p-2 rounded" value={formData.phone} onChange={e=>setFormData({...formData, phone:e.target.value})} />
+                        <input required type="date" className="w-full border p-2 rounded" value={formData.date} onChange={e=>setFormData({...formData, date:e.target.value})} />
+                        <select className="w-full border p-2 rounded" value={formData.branch} onChange={e=>setFormData({...formData, branch:e.target.value})}>
+                            {BRANCHES.map(b => <option key={b} value={b}>{b}</option>)}
+                        </select>
+                        <div className="flex gap-2 mt-4">
+                            <button type="button" onClick={onCancel} className="flex-1 bg-gray-200 py-2 rounded font-bold">Zrušit</button>
+                            <button type="submit" className="flex-1 bg-rose-600 text-white py-2 rounded font-bold">Odeslat</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div><label className="block text-sm font-medium mb-1">Jméno</label><input required className="w-full rounded-md border-gray-300 shadow-sm p-2 border" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} /></div>
-            <div><label className="block text-sm font-medium mb-1">Telefon</label><input required className="w-full rounded-md border-gray-300 shadow-sm p-2 border" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} /></div>
-            <div><label className="block text-sm font-medium mb-1">Datum vyzvednutí</label><input required type="date" min={getMinDate()} className="w-full rounded-md border-gray-300 shadow-sm p-2 border" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} /></div>
-            <div><label className="block text-sm font-medium mb-1">Pobočka</label><select className="w-full rounded-md border-gray-300 shadow-sm p-2 border" value={formData.branch} onChange={e => setFormData({...formData, branch: e.target.value})}>{BRANCHES.map(b => <option key={b} value={b}>{b}</option>)}</select></div>
-            <div><label className="block text-sm font-medium mb-1">Poznámka</label><textarea className="w-full rounded-md border-gray-300 shadow-sm p-2 border" rows="2" value={formData.notes} onChange={e => setFormData({...formData, notes: e.target.value})}></textarea></div>
-            <div className="pt-4 flex gap-3">
-              <Button type="button" variant="secondary" fullWidth onClick={onCancel}>Zrušit</Button>
-              <Button type="submit" variant="primary" fullWidth>Odeslat</Button>
-            </div>
-          </form>
         );
       };
 
-      const ProductCard = ({ product, onOrder }) => {
-        const EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'jfif', 'JPG', 'JPEG', 'PNG', 'JFIF'];
-        const [extIndex, setExtIndex] = React.useState(0);
-        const [usePlaceholder, setUsePlaceholder] = React.useState(false);
-
-        React.useEffect(() => { setExtIndex(0); setUsePlaceholder(false); }, [product.id]);
-
-        const getImageUrl = () => {
-          if (usePlaceholder) return `https://placehold.co/600x600/fff1f2/e11d48?text=${encodeURIComponent(product.name.substring(0, 15))}`;
-          return `images/${product.id}.${EXTENSIONS[extIndex]}`;
-        };
-
-        return (
-          <div className="group flex flex-col h-full overflow-hidden rounded-2xl bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl border border-stone-100">
-            <div className="relative aspect-square overflow-hidden bg-stone-100">
-              <img src={getImageUrl()} alt={product.imageAlt} onError={() => { if(extIndex < EXTENSIONS.length - 1) setExtIndex(p => p+1); else setUsePlaceholder(true); }} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
-              <div className="absolute top-4 right-4 rounded-full bg-white/95 px-3 py-1 text-sm font-bold text-gray-900 shadow-sm backdrop-blur-sm">{product.price} Kč</div>
-              <div className="absolute top-4 left-4 rounded-full bg-rose-500/90 px-3 py-1 text-xs font-bold text-white shadow-sm backdrop-blur-sm">#{product.id}</div>
-            </div>
-            <div className="flex flex-1 flex-col p-6">
-              <h3 className="mb-2 text-xl font-serif font-bold text-gray-900 leading-tight">{product.name}</h3>
-              <p className="mb-6 flex-1 text-sm leading-relaxed text-gray-600">{product.description}</p>
-              <Button onClick={() => onOrder(product)} variant="secondary" fullWidth className="mt-auto group-hover:bg-rose-50 group-hover:border-rose-300">Objednat dort</Button>
-            </div>
-          </div>
-        );
-      };
-
-      const Hero = () => {
-        const scrollToProducts = () => {
-          document.getElementById('nabidka').scrollIntoView({ behavior: 'smooth' });
-        };
-
-        return (
-          <section className="relative flex flex-col min-h-[60vh] md:min-h-[70vh] items-center justify-center overflow-hidden bg-rose-50 px-4 text-center pt-20 pb-10">
-            {/* Background blobs */}
-            <div className="absolute top-0 left-0 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-rose-100/60 blur-3xl mix-blend-multiply"></div>
-            <div className="absolute bottom-0 right-0 h-64 w-64 translate-x-1/2 translate-y-1/2 rounded-full bg-orange-100/60 blur-3xl mix-blend-multiply"></div>
-            
-            <div className="relative z-10 mx-auto max-w-4xl space-y-6 animate-fade-in-up">
-              <div className="space-y-4">
-                <span className="inline-block rounded-full bg-white/80 px-4 py-1.5 text-xs font-bold tracking-widest text-rose-600 uppercase shadow-sm backdrop-blur-sm ring-1 ring-rose-100">Rodinná tradice od roku 1995</span>
-                <h1 className="text-4xl font-bold leading-tight text-gray-900 sm:text-5xl md:text-6xl font-serif">
-                  Cukrářství <span className="text-rose-600">Blahutovi</span>
-                </h1>
-                <p className="mx-auto max-w-2xl text-lg text-gray-600 font-light leading-relaxed">Tradiční cukrárna s láskou k řemeslu. Pečeme z poctivých surovin.</p>
-              </div>
-
-              <div className="flex flex-col items-center justify-center gap-4 pt-2">
-                <a href={CONFIGURATOR_URL} className="w-full sm:w-auto transform transition-transform hover:scale-105">
-                  <Button size="xl" className="w-full shadow-rose-300/50 shadow-2xl"><span className="mr-2">🍰</span> Sestavit vlastní dort</Button>
-                </a>
-              </div>
-              <p className="text-xs text-gray-400">Přechod do online konfigurátoru</p>
-            </div>
-
-            {/* Scroll Indicator */}
-            <button onClick={scrollToProducts} className="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce cursor-pointer p-2 text-rose-400 hover:text-rose-600 transition-colors" aria-label="Posunout dolů">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
-            </button>
-          </section>
-        );
-      };
-
+      // 3. MAIN APP
       const App = () => {
-        const [selectedProduct, setSelectedProduct] = React.useState(null);
-        const [isModalOpen, setIsModalOpen] = React.useState(false);
+        const [selected, setSelected] = React.useState(null);
 
-        // Remove loading spinner when App mounts
+        // Hide loader on mount
         React.useEffect(() => {
-          const loader = document.getElementById('initial-loader');
-          if (loader) {
-            loader.classList.add('fade-out');
-            setTimeout(() => loader.remove(), 500);
-          }
+            const l = document.getElementById('initial-loader');
+            if(l) l.style.display = 'none';
         }, []);
 
-        const handleOrderClick = (product) => { setSelectedProduct(product); setIsModalOpen(true); };
-        const handleCloseModal = () => { setIsModalOpen(false); setTimeout(() => setSelectedProduct(null), 300); };
-
-        if (!PRODUCTS || PRODUCTS.length === 0) {
-           return <div className="text-center p-10 text-red-600">Chyba: Nepodařilo se načíst seznam dortů.</div>;
-        }
-
         return (
-          <div className="min-h-screen bg-stone-50 text-stone-800 font-sans selection:bg-rose-200 selection:text-rose-900">
-            <nav className="fixed top-0 left-0 w-full p-4 z-40 pointer-events-none">
-              <div className="container mx-auto">
-                 <a href={MAIN_WEB_URL} className="pointer-events-auto inline-flex items-center gap-2 text-stone-600 hover:text-rose-600 font-bold bg-white/90 backdrop-blur px-5 py-2.5 rounded-full shadow-lg border border-stone-100 transition-all hover:scale-105 hover:shadow-xl">
-                    <span>⬅</span> Zpět na hlavní web
-                 </a>
-              </div>
-            </nav>
-
-            <Hero />
-
-            <section className="py-16 px-4 md:px-8 bg-white relative z-20" id="nabidka">
-              <div className="container mx-auto max-w-7xl">
-                <div className="mb-12 text-center space-y-4">
-                  <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900">Vyberte si z naší nabídky</h2>
-                  <div className="h-1 w-20 bg-rose-400 mx-auto rounded-full"></div>
+            <div className="bg-white min-h-screen pb-10">
+                {/* NAVIGATION */}
+                <div className="fixed top-0 left-0 w-full p-2 z-40 flex justify-center pointer-events-none">
+                    <a href={MAIN_WEB_URL} className="pointer-events-auto bg-white/90 backdrop-blur px-6 py-2 rounded-full shadow-lg border border-gray-200 text-rose-600 font-bold hover:bg-rose-50 transition">
+                        ⬅ Zpět na hlavní web
+                    </a>
                 </div>
 
-                <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {PRODUCTS.map(product => (
-                    <ProductCard key={product.id} product={product} onOrder={handleOrderClick} />
-                  ))}
+                {/* HERO - COMPACT & WHITE */}
+                <div className="bg-white pt-24 pb-8 px-4 text-center border-b border-rose-100">
+                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2 font-serif">
+                        Cukrářství <span className="text-rose-600">Blahutovi</span>
+                    </h1>
+                    <p className="text-gray-500 mb-6">Tradiční výroba od roku 1995</p>
+                    
+                    <a href={CONFIGURATOR_URL} className="inline-block bg-rose-600 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-rose-700 transition transform hover:scale-105">
+                        🍰 Sestavit vlastní dort
+                    </a>
                 </div>
-              </div>
-            </section>
 
-            <footer className="bg-stone-900 text-stone-400 py-16 px-4">
-              <div className="container mx-auto text-center space-y-8">
-                <div><h3 className="text-3xl font-serif text-white">Cukrářství Blahutovi</h3><p className="text-stone-500">Sladký život od roku 1995</p></div>
-                <div className="flex justify-center gap-8 text-sm font-medium"><a href={MAIN_WEB_URL} className="hover:text-white">O nás</a><a href={MAIN_WEB_URL} className="hover:text-white">Kontakt</a></div>
-                <div className="pt-8 border-t border-stone-800"><p>© {new Date().getFullYear()} Cukrářství Blahutovi.</p></div>
-              </div>
-            </footer>
+                {/* PRODUCTS LIST */}
+                <div className="max-w-7xl mx-auto px-4 py-8">
+                    <p className="text-center text-gray-400 mb-6 text-sm">Načteno {PRODUCTS.length} dortů</p>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {PRODUCTS.map(p => (
+                            <div key={p.id} className="bg-white rounded-lg shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 flex flex-col">
+                                <div className="h-64 overflow-hidden relative bg-gray-50">
+                                    <ProductImage id={p.id} alt={p.name} />
+                                    <span className="absolute top-2 right-2 bg-white px-2 py-1 rounded-md text-sm font-bold shadow-sm">{p.price} Kč</span>
+                                    <span className="absolute top-2 left-2 bg-rose-600 text-white px-2 py-1 rounded-md text-xs font-bold shadow-sm">#{p.id}</span>
+                                </div>
+                                <div className="p-4 flex flex-col flex-1">
+                                    <h3 className="font-bold text-lg mb-1 leading-tight">{p.name}</h3>
+                                    <p className="text-gray-500 text-sm mb-4">{p.description}</p>
+                                    <button onClick={() => setSelected(p)} className="mt-auto w-full border-2 border-rose-100 text-rose-600 py-2 rounded-lg font-bold hover:bg-rose-50 transition">
+                                        Objednat
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
 
-            <Modal isOpen={isModalOpen} onClose={handleCloseModal} title="Nová objednávka">
-              {selectedProduct && <OrderForm product={selectedProduct} onCancel={handleCloseModal} />}
-            </Modal>
-          </div>
+                {selected && <OrderForm product={selected} onCancel={() => setSelected(null)} />}
+            </div>
         );
       };
 
-      try {
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-      } catch (err) {
-        console.error("Mount error:", err);
-        throw err; // Trigger global error handler
-      }
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
     </script>
   <script type="module" src="/index.tsx"></script>
 </body>
