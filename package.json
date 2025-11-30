@@ -1,7 +1,1 @@
-{
-  "name": "static-site",
-  "description": "Statická verze bez Node.js závislostí",
-  "scripts": {
-    "build": "echo 'No build needed'"
-  }
-}
+{}
