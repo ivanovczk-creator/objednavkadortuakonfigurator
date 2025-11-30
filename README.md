@@ -14,25 +14,36 @@ Aplikace běží na **Netlify** a doplňuje hlavní web na Webnode.
 
 Máte dvě možnosti, jak dostat katalog na svůj web. Vyberte si tu, která vám jde nastavit.
 
-### VARIANTA A: "Trik s prázdnou stránkou" (Nejjednodušší)
+### VARIANTA A: "Trik s prázdnou stránkou" (Doporučeno)
 Pokud ve Webnode nemůžete najít "Externí odkaz", použijte tento postup. Vytvoříme stránku, která zákazníka automaticky přesměruje.
 
 1. Ve Webnode editoru dejte **Přidat stránku**.
 2. Vyberte šablonu **Prázdná stránka** a nazvěte ji **Dorty**.
 3. Na novou stránku přidejte obsah typu **HTML** (černé tlačítko + a vybrat HTML).
-4. Vložte tam tento kód:
+4. Vložte tam tento robustní kód:
    ```html
+   <meta http-equiv="refresh" content="0;url=https://cakeorder11.netlify.app">
    <script>
-       window.location.href = "https://cakeorder11.netlify.app";
+       window.location.replace("https://cakeorder11.netlify.app");
+       // Pojistka pro iframy
+       setTimeout(function() {
+           window.top.location.href = "https://cakeorder11.netlify.app";
+       }, 500);
    </script>
-   <div style="text-align: center; padding: 50px;">
-       <h2>Načítám katalog dortů...</h2>
-       <p>Pokud se stránka neotevře, <a href="https://cakeorder11.netlify.app">klikněte zde</a>.</p>
+   
+   <div style="text-align: center; padding: 60px 20px; font-family: sans-serif;">
+       <h2 style="color: #333; margin-bottom: 20px;">Přecházím do katalogu dortů...</h2>
+       <p style="margin-bottom: 30px;">Pokud se katalog neotevře automaticky, klikněte prosím na tlačítko níže:</p>
+       
+       <a href="https://cakeorder11.netlify.app" 
+          style="display: inline-block; background-color: #e11d48; color: white; padding: 15px 40px; text-decoration: none; border-radius: 30px; font-weight: bold; font-size: 18px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+          🍰 Otevřít nabídku dortů
+       </a>
    </div>
    ```
 5. **Publikujte** stránku.
    
-*Výsledek: Zákazník klikne v menu na "Dorty" a automaticky se mu otevře katalog.*
+*Výsledek: Zákazník klikne v menu na "Dorty" a automaticky se mu otevře katalog. Pokud má blokované skripty, uvidí velké tlačítko.*
 
 ---
 
