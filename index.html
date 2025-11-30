@@ -48,7 +48,12 @@
         EMAIL_TO: "objednavky@cukrarstviblahutovi.cz",
         MAIN_WEB_URL: "https://www.cukrarstviblahutovi.cz",
         CONFIGURATOR_URL: "https://www.cukrarstviblahutovi.cz/konfigurator-dortu/",
-        BRANCHES: ["Hlavní prodejna", "Pobočka Náměstí", "Sklad"],
+        BRANCHES: [
+          "Petřvald - Šenovská 1 (tel. 778 157 857)",
+          "Karviná - Tř. Těreškovové 2233/28 (tel. 778 157 867)",
+          "Ostrava Zábřeh - Výškovická 116A (tel. 775 271 101)",
+          "Výrobna: Píšť - Opavská 218/101 (tel. 602 323 788)"
+        ],
         PRODUCTS: [
           { id: 1, name: "V MARCIPÁNU, 2 FIGURKY", price: 1800, description: "Orientační počet porcí: 12" },
           { id: 2, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", price: 1900, description: "Orientační počet porcí: 12" },
@@ -222,7 +227,7 @@
                             <input required type="date" className="w-full border p-2 rounded mt-1" value={formData.date} onChange={e=>setFormData({...formData, date:e.target.value})} />
                         </label>
                         <label className="block">
-                            <span className="text-sm text-gray-700 font-bold">Pobočka</span>
+                            <span className="text-sm text-gray-700 font-bold">Pobočka pro vyzvednutí</span>
                             <select className="w-full border p-2 rounded mt-1" value={formData.branch} onChange={e=>setFormData({...formData, branch:e.target.value})}>
                                 {BRANCHES.map(b => <option key={b} value={b}>{b}</option>)}
                             </select>
