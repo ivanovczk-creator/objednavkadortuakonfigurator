@@ -15,12 +15,12 @@
     <!-- Favicon (Cake Emoji) -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍰</text></svg>">
     
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- React & ReactDOM (CDNJS - More stable) -->
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     
     <!-- Babel Standalone -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -73,14 +73,47 @@
       html {
         scroll-behavior: smooth;
       }
+      #error-container {
+        display: none;
+        padding: 20px;
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #f87171;
+        margin: 20px;
+        border-radius: 8px;
+        font-family: sans-serif;
+        z-index: 9999;
+        position: relative;
+      }
     </style>
   <link rel="stylesheet" href="/index.css">
 </head>
   <body>
-    <div id="root"></div>
+    <div id="error-container"></div>
+    <div id="root" class="flex min-h-screen items-center justify-center text-xl text-rose-500 font-serif">
+      <div class="text-center">
+        <div class="mb-4 text-4xl animate-bounce">🍰</div>
+        <div>Načítám cukrárnu...</div>
+        <div class="text-sm text-stone-400 mt-2">Chvilku strpení</div>
+      </div>
+    </div>
+
+    <!-- Error Handler Script -->
+    <script>
+      window.onerror = function(message, source, lineno, colno, error) {
+        var container = document.getElementById('error-container');
+        var root = document.getElementById('root');
+        if(root) root.style.display = 'none';
+        
+        container.style.display = 'block';
+        container.innerHTML = '<strong>Omlouváme se, nastala chyba:</strong><br>' + message + 
+        '<br><br>Zkuste stránku obnovit (F5).';
+        console.error(error);
+      };
+    </script>
 
     <!-- MAIN APPLICATION SCRIPT -->
-    <script type="text/babel" data-presets="typescript,react">
+    <script type="text/babel" data-presets="env,react">
       
       // --- CONSTANTS & DATA ---
       const EMAIL_TO = "objednavky@cukrarstviblahutovi.cz";
@@ -142,7 +175,7 @@
         { id: 46, name: "MALÉ SRDCE", price: 450, description: "Orientační počet porcí: 6", imageAlt: "Dort č. 46" },
         { id: 47, name: "V ČOKOLÁDĚ, MARCIPÁNOVÉ OZDOBY", price: 3300, description: "Orientační počet porcí: 20-25", imageAlt: "Dort č. 47" },
         { id: 48, name: "V ČOKOLÁDĚ, MARCIPÁNOVÉ OZDOBY", price: 700, description: "Orientační počet porcí: 6", imageAlt: "Dort č. 48" },
-        { id: 49, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", price: 1100, description: "Orientační počet porcí: 10", imageAlt: "Dort č. 49" },
+        { id: 49, name: "OBMAZANÝ, MARCIPÁNOVÉ OZDOBY", price: 1800, description: "Orientační počet porcí: 12", imageAlt: "Dort č. 49" },
         { id: 50, name: "MINI ROLÁDY", price: 200, description: "Orientační počet porcí: 10", imageAlt: "Dort č. 50" },
         { id: 51, name: "OBMAZANÝ, OVOCE", price: 5500, description: "Orientační počet porcí: 40-50", imageAlt: "Dort č. 51" },
         { id: 52, name: "BÍLÝ FONDÁN, OVOCE", price: 2800, description: "Orientační počet porcí: 15-20", imageAlt: "Dort č. 52" },
@@ -515,15 +548,9 @@ Děkuji.
 
         return (
           <div className="min-h-screen bg-stone-50 text-stone-800 font-sans selection:bg-rose-200 selection:text-rose-900">
-            {/* Navigation - Simple Logo */}
             <nav className="absolute top-0 left-0 w-full p-6 z-20">
               <div className="container mx-auto flex justify-between items-center">
-                <div className="text-2xl font-serif font-bold tracking-tighter text-gray-900">
-                  CB.
-                </div>
-                <div className="hidden sm:block text-sm font-semibold text-gray-500 bg-white/80 px-4 py-2 rounded-full backdrop-blur-sm shadow-sm">
-                  📞 Objednávky: +420 123 456 789
-                </div>
+                 {/* Empty nav as requested */}
               </div>
             </nav>
 
@@ -591,9 +618,14 @@ Děkuji.
       };
 
       // Render
-      // Používáme createRoot pro React 18
-      const root = ReactDOM.createRoot(document.getElementById('root'));
-      root.render(<App />);
+      try {
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+      } catch (err) {
+        console.error("Mounting error:", err);
+        document.getElementById('error-container').style.display = 'block';
+        document.getElementById('error-container').innerHTML = 'Chyba při startu aplikace: ' + err.message;
+      }
     </script>
   <script type="module" src="/index.tsx"></script>
 </body>
